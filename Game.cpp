@@ -272,6 +272,15 @@ void Game::LoadAssetsAndCreateEntities()
 	IBLTestMat6->AddTextureSRV("MetalMap", instance.GetTexture("bronze_metal"));
 	materials.push_back(IBLTestMat6);
 
+	std::shared_ptr<Material> hairTestMat = std::make_shared<Material>(instance.GetPixelShader("PixelShaderPBR"), instance.GetVertexShader("VertexShader"), "Hair Test", XMFLOAT3(1, 1, 1), true);
+	hairTestMat->AddSampler("BasicSampler", samplerOptions);
+	hairTestMat->AddSampler("ClampSampler", clampSamplerOptions);
+	hairTestMat->AddTextureSRV("Albedo", instance.GetTexture("rough_albedo"));
+	hairTestMat->AddTextureSRV("NormalMap", instance.GetTexture("rough_normals"));
+	hairTestMat->AddTextureSRV("RoughnessMap", instance.GetTexture("rough_roughness"));
+	hairTestMat->AddTextureSRV("MetalMap", instance.GetTexture("rough_metal"));
+	materials.push_back(hairTestMat);
+
 
 
 	// === Create the PBR entities =====================================
@@ -296,6 +305,9 @@ void Game::LoadAssetsAndCreateEntities()
 	std::shared_ptr<GameEntity> woodSpherePBR = std::make_shared<GameEntity>(instance.GetMesh("sphere"), woodMatPBR);
 	woodSpherePBR->GetTransform()->SetPosition(6, 2, 0);
 
+	std::shared_ptr<GameEntity> hairEntity = std::make_shared<GameEntity>(instance.GetMesh("sphere"), hairTestMat);
+	hairEntity->GetTransform()->SetPosition(.5f, -.5f, 0);
+
 	entities.push_back(cobSpherePBR);
 	entities.push_back(floorSpherePBR);
 	entities.push_back(paintSpherePBR);
@@ -303,6 +315,7 @@ void Game::LoadAssetsAndCreateEntities()
 	entities.push_back(bronzeSpherePBR);
 	entities.push_back(roughSpherePBR);
 	entities.push_back(woodSpherePBR);
+	entities.push_back(hairEntity);
 
 	std::shared_ptr<GameEntity> iblTestSphere1 = std::make_shared<GameEntity>(instance.GetMesh("sphere"), IBLTestMat1);
 	iblTestSphere1->GetTransform()->SetPosition(-2, -.5f, 0);
@@ -439,6 +452,9 @@ void Game::Update(float deltaTime, float totalTime)
 {
 	// Update the camera
 	camera->Update(deltaTime);
+
+	//UpdateRenderer
+	DXRenderer->Update(deltaTime);
 
 	entities[0]->GetTransform()->Rotate(0, deltaTime, 0);
 	entities[3]->GetTransform()->Rotate(0, deltaTime, 0);

@@ -20,4 +20,5 @@ cbuffer data : register(b0)
 [numthreads(8, 8, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )
 {
+	Vertex currentVert = vertexData[DTid.x + DTid.y];
 }

@@ -16,15 +16,15 @@ public:
 	Material(
 		std::shared_ptr<SimplePixelShader> ps,
 		std::shared_ptr<SimpleVertexShader> vs,
+		const char* Name,
 		bool Refractive,
 		float RefractionScale,
-		const char* Name,
-		bool IsFur = false,
-		DirectX::XMFLOAT3 TipColor = DirectX::XMFLOAT3(1, 1, 1),
-		DirectX::XMFLOAT3 BaseColor = DirectX::XMFLOAT3(1, 1, 1),
 		DirectX::XMFLOAT3 tint = DirectX::XMFLOAT3(1, 1, 1),
 		DirectX::XMFLOAT2 uvScale = DirectX::XMFLOAT2(1, 1),
-		DirectX::XMFLOAT2 uvOffset = DirectX::XMFLOAT2(0, 0));
+		DirectX::XMFLOAT2 uvOffset = DirectX::XMFLOAT2(0, 0),
+		bool IsFur = false,
+		DirectX::XMFLOAT3 TipColor = DirectX::XMFLOAT3(1, 1, 1),
+		DirectX::XMFLOAT3 BaseColor = DirectX::XMFLOAT3(1, 1, 1));
 	Material(
 		std::shared_ptr<SimplePixelShader> ps,
 		std::shared_ptr<SimpleVertexShader> vs,

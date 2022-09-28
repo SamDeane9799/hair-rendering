@@ -9,6 +9,7 @@ using namespace DirectX;
 
 Mesh::Mesh(Vertex* vertArray, int numVerts, unsigned int* indexArray, int numIndices, Microsoft::WRL::ComPtr<ID3D11Device> device)
 {
+	numOfVerts = numVerts;
 	CreateBuffers(vertArray, numVerts, indexArray, numIndices, device);
 }
 
@@ -210,7 +211,7 @@ void Mesh::CreateBuffers(Vertex* vertArray, int numVerts, unsigned int* indexArr
 	vbd.ByteWidth = sizeof(Vertex) * numVerts; // Number of vertices
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
-	vbd.MiscFlags = 0;
+	vbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 	vbd.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA initialVertexData;
 	initialVertexData.pSysMem = vertArray;
@@ -324,10 +325,13 @@ void Mesh::SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context
 	context->DrawIndexed(this->numIndices, 0, 0);
 }
 
-void Mesh::SetBuffersAndSimulateHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Microsoft::WRL::ComPtr<ID3D11Device> device)
+void Mesh::SetBuffersAndSimulateHair()
 {
 	std::shared_ptr<SimpleComputeShader> hairCS = Assets::GetInstance().GetComputeShader("SimulateHair");
 
 	hairCS->SetShader();
-	hairCS->SetData("vertexData", (void*)vb.Get(), (unsigned int)vb->)
+	hairCS->SetData("vertexData", (void*)vb.Get(), numOfVerts * sizeof(Vertex));
+	hairCS->CopyAllBufferData();
+
+	hairCS->DispatchByThreads(numOfVerts, 1, 1);
 }

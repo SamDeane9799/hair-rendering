@@ -31,5 +31,5 @@ void GameEntity::SimulateHair()
 {
 	if (!material->GetIsFur())
 		return;
-	
+	mesh->SetBuffersAndSimulateHair();
 }

@@ -1,17 +1,7 @@
 #include "Material.h"
 
-Material::Material(
-	std::shared_ptr<SimplePixelShader> ps,
-	std::shared_ptr<SimpleVertexShader> vs,
-	bool Refractive,
-	float RefractionScale,
-	const char* Name,
-	bool IsFur,
-	DirectX::XMFLOAT3 TipColor = DirectX::XMFLOAT3(1, 1, 1),
-	DirectX::XMFLOAT3 BaseColor = DirectX::XMFLOAT3(1, 1, 1),
-	DirectX::XMFLOAT3 tint,
-	DirectX::XMFLOAT2 uvScale,
-	DirectX::XMFLOAT2 uvOffset)
+
+Material::Material(std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<SimpleVertexShader> vs, const char* Name, bool Refractive, float RefractionScale, DirectX::XMFLOAT3 tint, DirectX::XMFLOAT2 uvScale, DirectX::XMFLOAT2 uvOffset, bool IsFur, DirectX::XMFLOAT3 TipColor, DirectX::XMFLOAT3 BaseColor)
 	:
 	ps(ps),
 	vs(vs),
@@ -21,11 +11,10 @@ Material::Material(
 	name(Name),
 	refractive(Refractive),
 	refractionScale(RefractionScale),
-	isFur(isFur),
+	isFur(IsFur),
 	tipColor(TipColor),
 	baseColor(BaseColor)
 {
-
 }
 
 Material::Material(std::shared_ptr<SimplePixelShader> ps, std::shared_ptr<SimpleVertexShader> vs, const char* Name, DirectX::XMFLOAT3 tint, DirectX::XMFLOAT2 uvScale, DirectX::XMFLOAT2 uvOffset)
