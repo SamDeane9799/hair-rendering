@@ -88,8 +88,9 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Assets::CreateFloatTexture(std:
 	return Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
 }
 
-std::shared_ptr<Mesh> Assets::GetMesh(std::string name)
+std::shared_ptr<Mesh> Assets::GetMesh(std::string name, bool hasFur)
 {
+	//Need to discern between loading a model with and without hair
 	auto it = meshes.find(name);
 	if (it != meshes.end())
 		return it->second;
@@ -108,7 +109,7 @@ std::shared_ptr<Mesh> Assets::GetMesh(std::string name)
 					path = entry.path().string() + "\\" + name + ".obj";
 					if (experimental::filesystem::exists(path))
 					{
-						return LoadMesh(path, name + ".obj");
+						return LoadMesh(path, name + ".obj", hasFur);
 					}
 				}
 			}
@@ -287,7 +288,7 @@ unsigned int Assets::GetVertexShaderCount()
 	return (unsigned int)vertexShaders.size();
 }
 
-std::shared_ptr<Mesh> Assets::LoadMesh(std::string path, std::string filename)
+std::shared_ptr<Mesh> Assets::LoadMesh(std::string path, std::string filename, bool hasFur)
 {
 	if (printLoadingProgress) {
 		printf("Loading Mesh: ");
@@ -295,7 +296,7 @@ std::shared_ptr<Mesh> Assets::LoadMesh(std::string path, std::string filename)
 		printf("\n");
 	}
 
-	std::shared_ptr<Mesh> newMesh = make_shared<Mesh>(path.c_str(), device);
+	std::shared_ptr<Mesh> newMesh = make_shared<Mesh>(path.c_str(), device, hasFur);
 
 	meshes.insert({ RemoveFileExtension(filename), newMesh });
 	return newMesh;

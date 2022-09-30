@@ -11,9 +11,17 @@ Mesh::Mesh(Vertex* vertArray, int numVerts, unsigned int* indexArray, int numInd
 {
 	numOfVerts = numVerts;
 	CreateBuffers(vertArray, numVerts, indexArray, numIndices, device);
+	hasFur = false;
 }
 
-Mesh::Mesh(const char* objFile, Microsoft::WRL::ComPtr<ID3D11Device> device)
+Mesh::Mesh(Vertex* vertArray, int numVerts, unsigned int* indexArray, int numIndices, Microsoft::WRL::ComPtr<ID3D11Device> device, bool hasFur) : Mesh(vertArray, numVerts, indexArray, numIndices, device)
+{
+	if (hasFur)
+		CreateHairBuffers(vertArray, numVerts, device);
+	this->hasFur = hasFur;
+}
+
+Mesh::Mesh(const char* objFile, Microsoft::WRL::ComPtr<ID3D11Device> device, bool hasFur)
 {
 	// File input object
 	std::ifstream obj(objFile);
@@ -189,7 +197,9 @@ Mesh::Mesh(const char* objFile, Microsoft::WRL::ComPtr<ID3D11Device> device)
 
 	CreateBuffers(&verts[0], vertCounter, &indices[0], vertCounter, device);
 
-
+	if (hasFur)
+		CreateHairBuffers(&verts[0], vertCounter, device);
+	this->hasFur = hasFur;
 }
 
 
@@ -211,7 +221,7 @@ void Mesh::CreateBuffers(Vertex* vertArray, int numVerts, unsigned int* indexArr
 	vbd.ByteWidth = sizeof(Vertex) * numVerts; // Number of vertices
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
-	vbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	vbd.MiscFlags = 0;
 	vbd.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA initialVertexData;
 	initialVertexData.pSysMem = vertArray;
@@ -330,8 +340,23 @@ void Mesh::SetBuffersAndSimulateHair()
 	std::shared_ptr<SimpleComputeShader> hairCS = Assets::GetInstance().GetComputeShader("SimulateHair");
 
 	hairCS->SetShader();
-	hairCS->SetData("vertexData", (void*)vb.Get(), numOfVerts * sizeof(Vertex));
+	hairCS->SetData("vertexData", (void*)sb.Get(), numOfVerts * sizeof(Vertex));
 	hairCS->CopyAllBufferData();
 
 	hairCS->DispatchByThreads(numOfVerts, 1, 1);
+}
+
+void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::ComPtr<ID3D11Device> device)
+{
+	// Create the vertex buffer
+	D3D11_BUFFER_DESC sbd;
+	sbd.Usage = D3D11_USAGE_IMMUTABLE;
+	sbd.ByteWidth = sizeof(Vertex) * numVerts; // Number of vertices
+	sbd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	sbd.CPUAccessFlags = 0;
+	sbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	sbd.StructureByteStride = sizeof(Vertex);
+	D3D11_SUBRESOURCE_DATA initialVertexData;
+	initialVertexData.pSysMem = vertArray;
+	device->CreateBuffer(&sbd, &initialVertexData, sb.GetAddressOf());
 }

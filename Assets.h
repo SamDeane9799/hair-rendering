@@ -40,7 +40,7 @@ public:
 		std::string rootAssetPath,
 		Microsoft::WRL::ComPtr<ID3D11Device> device,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> context,
-		bool allowOnDemandLoading = false,
+		bool allowOnDemandLoading = true,
 		bool printLoadingProgress = true);
 
 	void LoadAllAssets();
@@ -49,7 +49,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateTexture(std::string textureName, int width, int height, DirectX::XMFLOAT4* pixels);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateFloatTexture(std::string textureName, int width, int height, DirectX::XMFLOAT4* pixels);
 
-	std::shared_ptr<Mesh> GetMesh(std::string name);
+	std::shared_ptr<Mesh> GetMesh(std::string name, bool hasFur = false);
 	std::shared_ptr<DirectX::SpriteFont> GetSpriteFont(const std::string name);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetTexture(std::string name);
 	std::shared_ptr<SimplePixelShader> GetPixelShader(std::string name);
@@ -71,7 +71,7 @@ public:
 	inline unsigned int GetComputeShaderCount() { return (unsigned int)computeShaders.size(); }
 
 private:
-	std::shared_ptr<Mesh> LoadMesh(std::string path, std::string filename);
+	std::shared_ptr<Mesh> LoadMesh(std::string path, std::string filename, bool hasFur = false);
 	std::shared_ptr<DirectX::SpriteFont> LoadSpriteFont(std::string path, std::string filename);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadTexture(std::string path, std::string filename);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LoadDDSTexture(std::string path, std::string filename);

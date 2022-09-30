@@ -84,7 +84,6 @@ Game::~Game()
 void Game::Init()
 {
 	Assets::GetInstance().Initialize("../../Assets/", device, context, true, true);
-	Assets::GetInstance().LoadAllAssets();
 	// Asset loading and entity creation
 	LoadAssetsAndCreateEntities();
 	
@@ -160,7 +159,7 @@ void Game::LoadAssetsAndCreateEntities()
 	cobbleMat2xPBR->AddTextureSRV("MetalMap", instance.GetTexture("cobblestone_metal"));
 	materials.push_back(cobbleMat2xPBR);
 
-	std::shared_ptr<Material> cobbleMat4xPBR = std::make_shared<Material>(instance.GetPixelShader("RefractionPS"), instance.GetVertexShader("VertexShader"), true, 0.3f, "Cobble4x PBR", XMFLOAT3(1, 1, 1), XMFLOAT2(4, 4));
+	std::shared_ptr<Material> cobbleMat4xPBR = std::make_shared<Material>(instance.GetPixelShader("RefractionPS"), instance.GetVertexShader("VertexShader"),"Cobble4x PBR", true, 0.3f, XMFLOAT3(1, 1, 1), XMFLOAT2(4, 4));
 	cobbleMat4xPBR->AddSampler("BasicSampler", samplerOptions);
 	cobbleMat4xPBR->AddSampler("ClampSampler", clampSamplerOptions);
 	cobbleMat4xPBR->AddTextureSRV("Albedo", instance.GetTexture("cobblestone_albedo"));
@@ -187,7 +186,7 @@ void Game::LoadAssetsAndCreateEntities()
 	paintMatPBR->AddTextureSRV("MetalMap", instance.GetTexture("floor_metal"));
 	materials.push_back(paintMatPBR);
 
-	std::shared_ptr<Material> scratchedMatPBR = std::make_shared<Material>(instance.GetPixelShader("RefractionPS"), instance.GetVertexShader("VertexShader"), true, 1.8f, "Scratched PBR", XMFLOAT3(1, 1, 1), XMFLOAT2(2, 2));
+	std::shared_ptr<Material> scratchedMatPBR = std::make_shared<Material>(instance.GetPixelShader("RefractionPS"), instance.GetVertexShader("VertexShader"), "Scratched PBR", true, 1.8f, XMFLOAT3(1, 1, 1), XMFLOAT2(2, 2));
 	scratchedMatPBR->AddSampler("BasicSampler", samplerOptions);
 	scratchedMatPBR->AddSampler("ClampSampler", clampSamplerOptions);
 	scratchedMatPBR->AddTextureSRV("Albedo", instance.GetTexture("scratched_albedo"));
@@ -272,7 +271,7 @@ void Game::LoadAssetsAndCreateEntities()
 	IBLTestMat6->AddTextureSRV("MetalMap", instance.GetTexture("bronze_metal"));
 	materials.push_back(IBLTestMat6);
 
-	std::shared_ptr<Material> hairTestMat = std::make_shared<Material>(instance.GetPixelShader("PixelShaderPBR"), instance.GetVertexShader("VertexShader"), "Hair Test", XMFLOAT3(1, 1, 1), true);
+	std::shared_ptr<Material> hairTestMat = std::make_shared<Material>(instance.GetPixelShader("PixelShaderPBR"), instance.GetVertexShader("VertexShader"), "Hair Test", XMFLOAT3(1, 1, 1));
 	hairTestMat->AddSampler("BasicSampler", samplerOptions);
 	hairTestMat->AddSampler("ClampSampler", clampSamplerOptions);
 	hairTestMat->AddTextureSRV("Albedo", instance.GetTexture("rough_albedo"));
@@ -305,7 +304,7 @@ void Game::LoadAssetsAndCreateEntities()
 	std::shared_ptr<GameEntity> woodSpherePBR = std::make_shared<GameEntity>(instance.GetMesh("sphere"), woodMatPBR);
 	woodSpherePBR->GetTransform()->SetPosition(6, 2, 0);
 
-	std::shared_ptr<GameEntity> hairEntity = std::make_shared<GameEntity>(instance.GetMesh("sphere"), hairTestMat);
+	std::shared_ptr<GameEntity> hairEntity = std::make_shared<GameEntity>(instance.GetMesh("sphere", true), hairTestMat);
 	hairEntity->GetTransform()->SetPosition(.5f, -.5f, 0);
 
 	entities.push_back(cobSpherePBR);
@@ -500,6 +499,10 @@ void Game::Update(float deltaTime, float totalTime)
 	for (auto e : emitter)
 	{
 		e->Update(deltaTime);
+	}
+	for (auto e : entities)
+	{
+		e->SimulateHair();
 	}
 }
 
