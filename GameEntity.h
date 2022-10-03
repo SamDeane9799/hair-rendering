@@ -19,7 +19,7 @@ public:
 	Transform* GetTransform();
 
 	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::shared_ptr<Camera> camera);
-	void SimulateHair();
+	void CreateHair();
 
 private:
 

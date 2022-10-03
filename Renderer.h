@@ -37,7 +37,6 @@ public:
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backBufferRTV, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthBufferDSV);
 
 	void Render(std::shared_ptr<Camera> camera, std::vector<std::shared_ptr<Material>> materials, float deltaTime);
-	void Update(float deltaTime);
 private:
 
 	void DrawPointLights(std::shared_ptr<Camera> camera);

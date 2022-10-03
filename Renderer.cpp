@@ -250,13 +250,6 @@ void Renderer::Render(shared_ptr<Camera> camera, vector<shared_ptr<Material>> ma
 	prevProj = camera->GetProjection();
 }
 
-void Renderer::Update(float deltaTime)
-{
-	for (auto& ge : entities) {
-		ge->SimulateHair();
-	}
-}
-
 void Renderer::DrawUI(vector<shared_ptr<Material>> materials, float deltaTime)
 {
 	// Reset render states, since sprite batch changes these!

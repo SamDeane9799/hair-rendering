@@ -16,11 +16,12 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetVertexBuffer() { return vb; }
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetIndexBuffer() { return ib; }
+	bool GetHasFur() { return hasFur; }
 	int GetIndexCount() { return numIndices; }
 
 	void SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 
-	void SetBuffersAndSimulateHair();
+	void SetBuffersAndCreateHair();
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vb;

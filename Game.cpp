@@ -305,7 +305,7 @@ void Game::LoadAssetsAndCreateEntities()
 	woodSpherePBR->GetTransform()->SetPosition(6, 2, 0);
 
 	std::shared_ptr<GameEntity> hairEntity = std::make_shared<GameEntity>(instance.GetMesh("sphere", true), hairTestMat);
-	hairEntity->GetTransform()->SetPosition(.5f, -.5f, 0);
+	hairEntity->GetTransform()->SetPosition(.5f, -2.0f, 0);
 
 	entities.push_back(cobSpherePBR);
 	entities.push_back(floorSpherePBR);
@@ -373,6 +373,11 @@ void Game::LoadAssetsAndCreateEntities()
 	emitter.push_back(testEmitter);
 	emitter.push_back(testEmitter2);
 	emitter.push_back(testEmitter3);
+
+	for (auto e : entities)
+	{
+		e->CreateHair();
+	}
 }
 
 
@@ -452,9 +457,6 @@ void Game::Update(float deltaTime, float totalTime)
 	// Update the camera
 	camera->Update(deltaTime);
 
-	//UpdateRenderer
-	DXRenderer->Update(deltaTime);
-
 	entities[0]->GetTransform()->Rotate(0, deltaTime, 0);
 	entities[3]->GetTransform()->Rotate(0, deltaTime, 0);
 	if (entities[1]->GetTransform()->GetPosition().x > 5 && entityDirection == 1)
@@ -499,10 +501,6 @@ void Game::Update(float deltaTime, float totalTime)
 	for (auto e : emitter)
 	{
 		e->Update(deltaTime);
-	}
-	for (auto e : entities)
-	{
-		e->SimulateHair();
 	}
 }
 

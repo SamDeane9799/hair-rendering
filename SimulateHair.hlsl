@@ -12,8 +12,8 @@ RWBuffer<uint> g_drawInstancedBuffer		: register(u0);
 
 cbuffer data : register(b0)
 {
-	float lengthVariance;
-	float widthVariance;
+	float lengthRange;
+	float width;
 }
 
 

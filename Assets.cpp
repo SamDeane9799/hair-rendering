@@ -92,14 +92,14 @@ std::shared_ptr<Mesh> Assets::GetMesh(std::string name, bool hasFur)
 {
 	//Need to discern between loading a model with and without hair
 	auto it = meshes.find(name);
-	if (it != meshes.end())
+	if (it != meshes.end() && it->second->GetHasFur() == hasFur)
 		return it->second;
 
 	if (allowOnDemandLoading)
 	{
 		string path = GetFullPathTo(rootAssetPath + name + ".obj");
 		if (experimental::filesystem::exists(path))
-			return LoadMesh(path, name + ".obj");
+			return LoadMesh(path, name + ".obj", hasFur);
 		else
 		{
 			for (const auto& entry : experimental::filesystem::directory_iterator(GetFullPathTo(rootAssetPath)))
@@ -295,7 +295,6 @@ std::shared_ptr<Mesh> Assets::LoadMesh(std::string path, std::string filename, b
 		printf(filename.c_str());
 		printf("\n");
 	}
-
 	std::shared_ptr<Mesh> newMesh = make_shared<Mesh>(path.c_str(), device, hasFur);
 
 	meshes.insert({ RemoveFileExtension(filename), newMesh });
