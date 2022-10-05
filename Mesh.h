@@ -26,6 +26,7 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vb;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> sb;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> hb;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> ib;
 	int numIndices;
 	int numOfVerts;

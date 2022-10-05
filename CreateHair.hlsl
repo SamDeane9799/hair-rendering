@@ -7,7 +7,16 @@ struct Vertex
 	float3 Tangent;		// Normal mapping
 };
 
+struct HairStrand
+{
+	float3 Position;	    // The position of the vertex
+	float2 UV;			// Texture mapping
+	float3 Normal;		// Lighting
+	float3 Tangent;		// Normal mapping
+};
+
 StructuredBuffer<Vertex> vertexData		: register(t0);
+RWStructuredBuffer<HairStrand> hairData	: register(t1);
 RWBuffer<uint> g_drawInstancedBuffer		: register(u0);
 
 cbuffer data : register(b0)
@@ -20,5 +29,7 @@ cbuffer data : register(b0)
 [numthreads(8, 8, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )
 {
-	Vertex currentVert = vertexData[DTid.x + DTid.y];
+	Vertex currentVert = vertexData[DTid.x * DTid.y];
+
+	HairStrand currentHair = hairData[DTid.x * DTid.y];
 }

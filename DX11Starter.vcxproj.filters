@@ -155,6 +155,9 @@
     <ClInclude Include="Emitter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HairStrand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -211,7 +214,7 @@
     <FxCompile Include="MotionBlurNeighborhoodPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="SimulateHair.hlsl">
+    <FxCompile Include="CreateHair.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

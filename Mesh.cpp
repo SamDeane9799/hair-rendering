@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "Assets.h"
+#include "HairStrand.h"
 #include <memory>
 #include <DirectXMath.h>
 #include <vector>
@@ -195,6 +196,8 @@ Mesh::Mesh(const char* objFile, Microsoft::WRL::ComPtr<ID3D11Device> device, boo
 	//    an index buffer in this case?  Sure!  Though, if your mesh class assumes you have
 	//    one, you'll need to write some extra code to handle cases when you don't.
 
+	numOfVerts = vertCounter;
+
 	CreateBuffers(&verts[0], vertCounter, &indices[0], vertCounter, device);
 
 	if (hasFur)
@@ -337,10 +340,11 @@ void Mesh::SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context
 
 void Mesh::SetBuffersAndCreateHair()
 {
-	std::shared_ptr<SimpleComputeShader> hairCS = Assets::GetInstance().GetComputeShader("SimulateHair");
+	std::shared_ptr<SimpleComputeShader> hairCS = Assets::GetInstance().GetComputeShader("CreateHair");
 
 	hairCS->SetShader();
 	hairCS->SetData("vertexData", (void*)sb.Get(), numOfVerts * sizeof(Vertex));
+	hairCS->SetData("hairData", (void*)hb.Get(), numOfVerts * sizeof(HairStrand));
 	hairCS->CopyAllBufferData();
 
 	hairCS->DispatchByThreads(numOfVerts/2, numOfVerts/2, 1);
@@ -361,14 +365,12 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	device->CreateBuffer(&sbd, &initialVertexData, sb.GetAddressOf());
 
 	//Create buffer for information on grass
-	D3D11_BUFFER_DESC sbd;
-	sbd.Usage = D3D11_USAGE_IMMUTABLE;
-	sbd.ByteWidth = sizeof(Vertex) * numVerts; // Number of vertices
-	sbd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	sbd.CPUAccessFlags = 0;
-	sbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	sbd.StructureByteStride = sizeof(Vertex);
-	D3D11_SUBRESOURCE_DATA initialVertexData;
-	initialVertexData.pSysMem = vertArray;
-	device->CreateBuffer(&sbd, &initialVertexData, sb.GetAddressOf());
+	D3D11_BUFFER_DESC hbd;
+	hbd.Usage = D3D11_USAGE_DEFAULT;
+	hbd.ByteWidth = sizeof(HairStrand) * numVerts; // Number of vertices
+	hbd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	hbd.CPUAccessFlags = 0;
+	hbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	hbd.StructureByteStride = sizeof(HairStrand);
+	device->CreateBuffer(&hbd, 0, hb.GetAddressOf());
 }
