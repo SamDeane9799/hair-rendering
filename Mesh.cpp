@@ -212,6 +212,21 @@ Mesh::~Mesh(void)
 }
 
 
+void Mesh::SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
+{
+	// Set buffers in the input assembler
+	UINT stride = 0;
+	UINT offset = 0;
+	ID3D11Buffer* nullBuffer = 0;
+	context->IASetVertexBuffers(0, 1, &nullBuffer, &stride, &offset);
+	context->IASetIndexBuffer(hairIB.Get(), DXGI_FORMAT_R32_UINT, 0);
+	std::shared_ptr<SimpleVertexShader> vs = Assets::GetInstance().GetVertexShader("HairVS");
+	//Fill in vertex shader info
+
+	// Draw this mesh
+	context->DrawIndexed(this->numOfVerts * 3, 0, 0);
+}
+
 void Mesh::CreateBuffers(Vertex* vertArray, int numVerts, unsigned int* indexArray, int numIndices, Microsoft::WRL::ComPtr<ID3D11Device> device)
 {
 	// Always calculate the tangents before copying to buffer
@@ -336,6 +351,9 @@ void Mesh::SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context
 
 	// Draw this mesh
 	context->DrawIndexed(this->numIndices, 0, 0);
+
+	if (hasFur)
+		SetBuffersAndDrawHair(context);
 }
 
 void Mesh::SetBuffersAndCreateHair()
@@ -364,7 +382,7 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	initialVertexData.pSysMem = vertArray;
 	device->CreateBuffer(&sbd, &initialVertexData, sb.GetAddressOf());
 
-	//Create buffer for information on grass
+	//Create buffer for information on hair
 	D3D11_BUFFER_DESC hbd;
 	hbd.Usage = D3D11_USAGE_DEFAULT;
 	hbd.ByteWidth = sizeof(HairStrand) * numVerts; // Number of vertices
@@ -373,4 +391,24 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	hbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 	hbd.StructureByteStride = sizeof(HairStrand);
 	device->CreateBuffer(&hbd, 0, hb.GetAddressOf());
+
+	//Create hair index buffer
+	int numIndices = numOfVerts * 3;
+	unsigned int* indicies = new unsigned int[numIndices];
+	for (int i = 0; i < numIndices; i ++)
+	{
+		indicies[i] = i;
+	}
+
+	D3D11_SUBRESOURCE_DATA indexData = {};
+	indexData.pSysMem = indicies;
+
+	D3D11_BUFFER_DESC ibDesc = {};
+	ibDesc.Usage = D3D11_USAGE_DEFAULT;
+	ibDesc.CPUAccessFlags = 0;
+	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibDesc.ByteWidth = sizeof(unsigned int) * numIndices;
+	device->CreateBuffer(&ibDesc, &indexData, hairIB.GetAddressOf());
+	delete indicies;
+
 }
