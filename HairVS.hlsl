@@ -22,7 +22,7 @@ struct VertexToPixel
 	float4 currentScreenPos	: SCREEN_POS1;
 };
 
-StructuredBuffer<HairStrand> HairData	:	register(t0)
+StructuredBuffer<HairStrand> HairData	:	register(t0);
 
 VertexToPixel main(uint id : SV_VertexID)
 {
