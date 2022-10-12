@@ -133,11 +133,13 @@ void Renderer::Render(shared_ptr<Camera> camera, vector<shared_ptr<Material>> ma
 		// we are just using whichever shader the current entity has.  
 		// Inefficient!!!
 		std::shared_ptr<SimpleVertexShader> vs = ge->GetMaterial()->GetVertexShader();
+		vs->SetShader();
 		vs->SetMatrix4x4("prevProjection", prevProj);
 		vs->SetMatrix4x4("prevView", prevView);
 		vs->SetMatrix4x4("prevWorld", ge->GetTransform()->GetPreviousWorldMatrix());
 		vs->CopyAllBufferData();
 		std::shared_ptr<SimplePixelShader> ps = ge->GetMaterial()->GetPixelShader();
+		ps->SetShader();
 		ps->SetData("lights", (void*)(&lights[0]), sizeof(Light) * (int)lights.size());
 		ps->SetInt("lightCount", lights.size());
 		ps->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
@@ -151,6 +153,20 @@ void Renderer::Render(shared_ptr<Camera> camera, vector<shared_ptr<Material>> ma
 
 		// Draw the entity
 		ge->Draw(context, camera);
+
+		if (ge->GetMesh()->GetHasFur())
+		{
+			std::shared_ptr<SimpleVertexShader> vs = Assets::GetInstance().GetVertexShader("HairVS");
+			vs->SetShader();
+			vs->SetMatrix4x4("world", ge->GetTransform()->GetWorldMatrix());
+			vs->SetMatrix4x4("worldInverseTranspose", ge->GetTransform()->GetWorldInverseTransposeMatrix());
+			vs->SetMatrix4x4("view", camera->GetView());
+			vs->SetMatrix4x4("projection", camera->GetProjection());
+			vs->CopyAllBufferData();
+			Assets::GetInstance().GetPixelShader("WhitePS")->SetShader();
+
+			ge->GetMesh()->SetBuffersAndDrawHair(context);
+		}
 	}
 
 	// Draw the light sources
@@ -158,15 +174,6 @@ void Renderer::Render(shared_ptr<Camera> camera, vector<shared_ptr<Material>> ma
 
 	// Draw the sky
 	sky->Draw(camera);
-
-
-
-	/*Assets::GetInstance().GetPixelShader("FullscreenPS")->SetShader();
-	Assets::GetInstance().GetPixelShader("FullscreenPS")->SetSamplerState("basicSampler", ppSampler.Get());
-	Assets::GetInstance().GetPixelShader("FullscreenPS")->SetShaderResourceView("albedo", renderTargetsSRV[ALBEDO].Get());
-	Assets::GetInstance().GetPixelShader("FullscreenPS")->CopyAllBufferData();
-
-	context->Draw(3, 0);*/
 
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;

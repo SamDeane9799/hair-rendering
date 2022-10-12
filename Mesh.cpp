@@ -220,10 +220,12 @@ void Mesh::SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> con
 	ID3D11Buffer* nullBuffer = 0;
 	context->IASetVertexBuffers(0, 1, &nullBuffer, &stride, &offset);
 	context->IASetIndexBuffer(hairIB.Get(), DXGI_FORMAT_R32_UINT, 0);
-	std::shared_ptr<SimpleVertexShader> vs = Assets::GetInstance().GetVertexShader("HairVS");
-	//Fill in vertex shader info
 
-	// Draw this mesh
+	std::shared_ptr<SimpleVertexShader> vs = Assets::GetInstance().GetVertexShader("HairVS");
+	vs->SetData("HairData", (void*)hb.Get(), numOfVerts * sizeof(HairStrand));
+	vs->CopyAllBufferData();
+
+	// Draw this mesh's hair
 	context->DrawIndexed(this->numOfVerts * 3, 0, 0);
 }
 
@@ -409,6 +411,6 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibDesc.ByteWidth = sizeof(unsigned int) * numIndices;
 	device->CreateBuffer(&ibDesc, &indexData, hairIB.GetAddressOf());
-	delete indicies;
+	delete[] indicies;
 
 }

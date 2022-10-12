@@ -3,12 +3,9 @@
 cbuffer externalData : register(b0)
 {
 	matrix world;
-	matrix prevWorld;
 	matrix worldInverseTranspose;
 	matrix view;
 	matrix projection;
-	matrix prevView;
-	matrix prevProjection;
 };
 // Out of the vertex shader (and eventually input to the PS)
 struct VertexToPixel
@@ -28,26 +25,23 @@ VertexToPixel main(uint id : SV_VertexID)
 {
 	// Set up output
 	VertexToPixel output;
-	HairStrand input = HairData.Load(id % 3);
+	HairStrand input = HairData.Load(id);
 
 	// Calculate output position
 	matrix worldViewProj = mul(projection, mul(view, world));
-	output.screenPosition = mul(worldViewProj, float4(input.position, 1.0f));
+	output.screenPosition = mul(worldViewProj, float4(input.Position, 1.0f));
 	output.currentScreenPos = output.screenPosition;
-
-	matrix prevWorldViewProj = mul(prevProjection, mul(prevView, prevWorld));
-	output.prevScreenPos = mul(prevWorldViewProj, float4(input.position, 1.0f));
 
 	// Calculate the world position of this vertex (to be used
 	// in the pixel shader when we do point/spot lights)
-	output.worldPos = mul(world, float4(input.position, 1.0f)).xyz;
+	output.worldPos = mul(world, float4(input.Position, 1.0f)).xyz;
 
 	// Make sure the other vectors are in WORLD space, not "local" space
-	output.normal = normalize(mul((float3x3)worldInverseTranspose, input.normal));
+	output.normal = normalize(mul((float3x3)worldInverseTranspose, input.Normal));
 	//output.tangent = normalize(mul((float3x3)world, input.tangent)); // Tangent doesn't need inverse transpose!
 
 	// Pass the UV through
-	output.uv = input.uv;
+	output.uv = input.UV;
 
 	return output;
 }

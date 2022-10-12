@@ -39,8 +39,8 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	hairStrand.Normal = currentVert.Normal;
 	hairStrand.UV = currentVert.UV;
 
-	offSets[0] = float3(-0.5f, 0, 0.0f);
-	offSets[1] = float3(0.5f, 0.0f, 0.0f);
-	offSets[2] = float3(0.0f, 1.0f, 0.0f);
+	offSets[0] = float3(-0.1f, 0, 0.0f);
+	offSets[1] = float3(0.1f, 0.0f, 0.0f);
+	offSets[2] = float3(0.0f, 0.2f, 0.0f);
 	hairStrand.Position = currentVert.Position + offSets[cornerID];
 }
