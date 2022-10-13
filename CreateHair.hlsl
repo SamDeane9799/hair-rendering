@@ -31,16 +31,13 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	int cornerID = index % 3;
 	float3 offSets[3];
 
-
 	Vertex currentVert = vertexData[index / 3];
 
-	HairStrand hairStrand = hairData[index];
-
-	hairStrand.Normal = currentVert.Normal;
-	hairStrand.UV = currentVert.UV;
+	hairData[index].Normal = currentVert.Normal;
+	hairData[index].UV = currentVert.UV;
 
 	offSets[0] = float3(-0.1f, 0, 0.0f);
 	offSets[1] = float3(0.1f, 0.0f, 0.0f);
 	offSets[2] = float3(0.0f, 0.2f, 0.0f);
-	hairStrand.Position = currentVert.Position + offSets[cornerID];
+	hairData[index].Position = currentVert.Position + offSets[cornerID];
 }

@@ -367,7 +367,9 @@ void Mesh::SetBuffersAndCreateHair()
 	hairCS->SetData("hairData", (void*)hb.Get(), numOfVerts * sizeof(HairStrand));
 	hairCS->CopyAllBufferData();
 
-	hairCS->DispatchByThreads(numOfVerts/2, numOfVerts/2, 1);
+	hairCS->DispatchByThreads(numOfVerts * 3/2, numOfVerts * 3/2, 1);
+
+	hairCS->SetData("hairData", 0, numOfVerts * sizeof(HairStrand));
 }
 
 void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::ComPtr<ID3D11Device> device)
