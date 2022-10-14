@@ -15,7 +15,7 @@ struct HairStrand
 	float2 UV;			// Texture mapping
 };
 
-StructuredBuffer<Vertex> vertexData		: register(t0);
+StructuredBuffer<Vertex> vertexData;
 RWStructuredBuffer<HairStrand> hairData	: register(u0);
 
 cbuffer data : register(b0)

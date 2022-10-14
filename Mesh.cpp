@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include "Assets.h"
 #include "HairStrand.h"
+#include "ShaderVertex.h"
 #include <memory>
 #include <DirectXMath.h>
 #include <vector>
@@ -367,25 +368,33 @@ void Mesh::SetBuffersAndCreateHair()
 	std::shared_ptr<SimpleComputeShader> hairCS = Assets::GetInstance().GetComputeShader("CreateHair");
 
 	hairCS->SetShader();
-	hairCS->SetData("vertexData", (void*)sb.Get(), numOfVerts * sizeof(Vertex));
+	hairCS->SetData("vertexData", (void*)sb.Get(), numOfVerts * sizeof(ShaderVertex));
 	hairCS->SetData("hairData", (void*)hb.Get(), numOfVerts * sizeof(HairStrand));
-	hairCS->CopyAllBufferData();
 
 	hairCS->DispatchByThreads(numOfVerts * 3, 1, 1);
 }
 
 void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::ComPtr<ID3D11Device> device)
 {
+	ShaderVertex* vertexInfo = new ShaderVertex[numVerts];
+	for (int i = 0; i < numVerts; i++)
+	{
+		vertexInfo[i].Position = vertArray[i].Position;
+		vertexInfo[i].Normal = vertArray[i].Normal;
+		vertexInfo[i].Tangent = vertArray[i].Tangent;
+		vertexInfo[i].UV = vertArray[i].UV;
+	}
+
 	// Create the vertex buffer
 	D3D11_BUFFER_DESC sbd;
 	sbd.Usage = D3D11_USAGE_IMMUTABLE;
-	sbd.ByteWidth = (sizeof(Vertex)) * numVerts; // Number of vertices
+	sbd.ByteWidth = (sizeof(ShaderVertex)) * numVerts; // Number of vertices
 	sbd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	sbd.CPUAccessFlags = 0;
 	sbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	sbd.StructureByteStride = sizeof(Vertex);
+	sbd.StructureByteStride = sizeof(ShaderVertex);
 	D3D11_SUBRESOURCE_DATA initialVertexData;
-	initialVertexData.pSysMem = vertArray;
+	initialVertexData.pSysMem = vertexInfo;
 	device->CreateBuffer(&sbd, &initialVertexData, sb.GetAddressOf());
 
 	//Create buffer for information on hair
@@ -416,5 +425,6 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	ibDesc.ByteWidth = sizeof(unsigned int) * numIndices;
 	device->CreateBuffer(&ibDesc, &indexData, hairIB.GetAddressOf());
 	delete[] indicies;
+	delete[] vertexInfo;
 
 }

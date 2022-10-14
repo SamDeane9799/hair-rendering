@@ -158,6 +158,9 @@
     <ClInclude Include="HairStrand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderVertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
