@@ -370,8 +370,10 @@ void Mesh::SetBuffersAndCreateHair()
 	hairCS->SetShader();
 	hairCS->SetData("vertexData", (void*)sb.Get(), numOfVerts * sizeof(ShaderVertex));
 	hairCS->SetData("hairData", (void*)hb.Get(), numOfVerts * sizeof(HairStrand));
-
+	hairCS->CopyAllBufferData();
 	hairCS->DispatchByThreads(numOfVerts * 3, 1, 1);
+
+	hairCS->SetData("hairData", 0, 0);
 }
 
 void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::ComPtr<ID3D11Device> device)
@@ -383,6 +385,7 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 		vertexInfo[i].Normal = vertArray[i].Normal;
 		vertexInfo[i].Tangent = vertArray[i].Tangent;
 		vertexInfo[i].UV = vertArray[i].UV;
+		vertexInfo[i].padding = 0;
 	}
 
 	// Create the vertex buffer
