@@ -26,7 +26,7 @@ VertexToPixel main(uint id : SV_VertexID)
 	// Set up output
 	VertexToPixel output;
 	HairStrand input = HairData.Load(id);
-	input.Position = input.Position - float3(0, -5.0f, -2.5f);
+	//input.Position = input.Position - float3(0, -2.5f, -5.0f);
 	// Calculate output position
 	matrix worldViewProj = mul(projection, mul(view, world));
 	output.screenPosition = mul(worldViewProj, float4(input.Position, 1.0f));

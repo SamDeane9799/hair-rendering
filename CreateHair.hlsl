@@ -2,16 +2,17 @@
 struct Vertex
 {
 	float3 Position;	    // The position of the vertex
-	float2 UV;			// Texture mapping
 	float3 Normal;		// Lighting
 	float3 Tangent;		// Normal mapping
+	float2 UV;			// Texture mapping
+	float padding;
 };
 
 struct HairStrand
 {
 	float3 Position;	    // The position of the vertex
-	float2 UV;			// Texture mapping
 	float3 Normal;		// Lighting
+	float2 UV;			// Texture mapping
 };
 
 StructuredBuffer<Vertex> vertexData		: register(t0);
@@ -25,9 +26,9 @@ cbuffer data : register(b0)
 
 
 [numthreads(8, 8, 1)]
-void main( uint3 DTid : SV_DispatchThreadID )
+void main( uint DTid : SV_GroupIndex )
 {
-	int index = DTid.x * DTid.y;
+	int index = DTid;
 	int cornerID = index % 3;
 	float3 offSets[3];
 

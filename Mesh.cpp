@@ -222,8 +222,12 @@ void Mesh::SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> con
 	context->IASetIndexBuffer(hairIB.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	std::shared_ptr<SimpleVertexShader> vs = Assets::GetInstance().GetVertexShader("HairVS");
+	vs->SetShader();
 	vs->SetData("HairData", (void*)hb.Get(), numOfVerts * sizeof(HairStrand));
 	vs->CopyAllBufferData();
+
+	std::shared_ptr<SimplePixelShader> ps = Assets::GetInstance().GetPixelShader("WhitePS");
+	ps->SetShader();
 
 	// Draw this mesh's hair
 	context->DrawIndexed(this->numOfVerts * 3, 0, 0);
@@ -367,9 +371,7 @@ void Mesh::SetBuffersAndCreateHair()
 	hairCS->SetData("hairData", (void*)hb.Get(), numOfVerts * sizeof(HairStrand));
 	hairCS->CopyAllBufferData();
 
-	hairCS->DispatchByThreads(numOfVerts * 3/2, numOfVerts * 3/2, 1);
-
-	hairCS->SetData("hairData", 0, numOfVerts * sizeof(HairStrand));
+	hairCS->DispatchByThreads(numOfVerts * 3, 1, 1);
 }
 
 void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::ComPtr<ID3D11Device> device)
@@ -377,7 +379,7 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	// Create the vertex buffer
 	D3D11_BUFFER_DESC sbd;
 	sbd.Usage = D3D11_USAGE_IMMUTABLE;
-	sbd.ByteWidth = sizeof(Vertex) * numVerts; // Number of vertices
+	sbd.ByteWidth = (sizeof(Vertex)) * numVerts; // Number of vertices
 	sbd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	sbd.CPUAccessFlags = 0;
 	sbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
