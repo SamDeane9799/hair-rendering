@@ -224,13 +224,15 @@ void Mesh::SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> con
 
 	std::shared_ptr<SimpleVertexShader> vs = Assets::GetInstance().GetVertexShader("HairVS");
 	vs->SetShader();
-	vs->SetData("HairData", (void*)hb.Get(), numOfVerts * sizeof(HairStrand));
+	vs->SetShaderResourceView("HairData", hairSRV);
 	vs->CopyAllBufferData();
 
 	std::shared_ptr<SimplePixelShader> ps = Assets::GetInstance().GetPixelShader("WhitePS");
 	ps->SetShader();
 
 	// Draw this mesh's hair
+	//TODO: Move this into renderer and move the rasterizer desc there as well
+	//context->RSSetState(hairRast.Get());
 	context->DrawIndexed(this->numOfVerts * 3, 0, 0);
 }
 
@@ -363,17 +365,32 @@ void Mesh::SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context
 		SetBuffersAndDrawHair(context);
 }
 
-void Mesh::SetBuffersAndCreateHair()
+void Mesh::SetBuffersAndCreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
 {
 	std::shared_ptr<SimpleComputeShader> hairCS = Assets::GetInstance().GetComputeShader("CreateHair");
 
 	hairCS->SetShader();
-	hairCS->SetData("vertexData", (void*)sb.Get(), numOfVerts * sizeof(ShaderVertex));
+	hairCS->SetShaderResourceView("vertexData", shaderVertexSRV);
 	hairCS->SetUnorderedAccessView("hairData", hairUAV, 0);
 	hairCS->CopyAllBufferData();
 	hairCS->DispatchByThreads(numOfVerts * 3, 1, 1);
 
-	hairCS->SetData("hairData", 0, 0);
+	D3D11_BUFFER_DESC newHairBufferDesc;
+	newHairBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	newHairBufferDesc.ByteWidth = (sizeof(HairStrand)) * numOfVerts; // Number of vertices
+	newHairBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	newHairBufferDesc.CPUAccessFlags = 0;
+	newHairBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	newHairBufferDesc.StructureByteStride = sizeof(HairStrand);
+	device->CreateBuffer(&newHairBufferDesc, 0, newHairBuffer.GetAddressOf());
+	context->CopyResource(newHairBuffer.Get(), initialHairBuffer.Get());
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC hairSRVDesc = {};
+	hairSRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	hairSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	hairSRVDesc.Buffer.NumElements = numOfVerts;
+	hairSRVDesc.Buffer.FirstElement = 0;
+	device->CreateShaderResourceView(newHairBuffer.Get(), &hairSRVDesc, hairSRV.GetAddressOf());
 }
 
 void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::ComPtr<ID3D11Device> device)
@@ -388,7 +405,6 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 		vertexInfo[i].padding = 0;
 	}
 
-
 	// Create the vertex buffer
 	D3D11_BUFFER_DESC sbd;
 	sbd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -401,15 +417,23 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	initialVertexData.pSysMem = vertexInfo;
 	device->CreateBuffer(&sbd, &initialVertexData, sb.GetAddressOf());
 
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderVertexDesc = {};
+	shaderVertexDesc.Format = DXGI_FORMAT_UNKNOWN;
+	shaderVertexDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	shaderVertexDesc.Buffer.NumElements = numVerts;
+	shaderVertexDesc.Buffer.FirstElement = 0;
+	shaderVertexDesc.Buffer.ElementWidth = sizeof(ShaderVertex);
+	device->CreateShaderResourceView(sb.Get(), &shaderVertexDesc, shaderVertexSRV.GetAddressOf());
+
 	//Create buffer for information on hair
 	D3D11_BUFFER_DESC hbd;
 	hbd.Usage = D3D11_USAGE_DEFAULT;
-	hbd.ByteWidth = sizeof(HairStrand) * numVerts; // Number of vertices
+	hbd.ByteWidth = sizeof(HairStrand) * numVerts; 
 	hbd.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
 	hbd.CPUAccessFlags = 0;
 	hbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 	hbd.StructureByteStride = sizeof(HairStrand);
-	device->CreateBuffer(&hbd, 0, hb.GetAddressOf());
+	device->CreateBuffer(&hbd, 0, initialHairBuffer.GetAddressOf());
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC hairDesc = {};
 	hairDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -417,7 +441,7 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	hairDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
 	hairDesc.Buffer.FirstElement = 0;
 	hairDesc.Buffer.NumElements = numVerts;
-	device->CreateUnorderedAccessView(hb.Get(), &hairDesc, hairUAV.GetAddressOf());
+	device->CreateUnorderedAccessView(initialHairBuffer.Get(), &hairDesc, hairUAV.GetAddressOf());
 
 	//Create hair index buffer
 	int numIndices = numOfVerts * 3;
@@ -436,7 +460,13 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibDesc.ByteWidth = sizeof(unsigned int) * numIndices;
 	device->CreateBuffer(&ibDesc, &indexData, hairIB.GetAddressOf());
+
+	D3D11_RASTERIZER_DESC hairRastDesc;
+	hairRastDesc.CullMode = D3D11_CULL_NONE;
+	hairRastDesc.FillMode = D3D11_FILL_SOLID;
+	hairRastDesc.DepthClipEnable = true;
+	device->CreateRasterizerState(&hairRastDesc, hairRast.GetAddressOf());
+
 	delete[] indicies;
 	delete[] vertexInfo;
-
 }

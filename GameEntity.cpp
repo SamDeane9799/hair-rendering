@@ -27,9 +27,9 @@ void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::
 	mesh->SetBuffersAndDraw(context);
 }
 
-void GameEntity::CreateHair()
+void GameEntity::CreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
 {
 	if (!mesh->GetHasFur())
 		return;
-	mesh->SetBuffersAndCreateHair();
+	mesh->SetBuffersAndCreateHair(device, context);
 }

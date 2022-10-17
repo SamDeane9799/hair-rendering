@@ -21,14 +21,18 @@ public:
 
 	void SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 
-	void SetBuffersAndCreateHair();
+	void SetBuffersAndCreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 	void SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vb;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> sb;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> hb;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderVertexSRV;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> initialHairBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> newHairBuffer;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> hairUAV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> hairSRV;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> hairRast;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> ib;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> hairIB;
 	int numIndices;
