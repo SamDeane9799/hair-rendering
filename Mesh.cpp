@@ -369,7 +369,7 @@ void Mesh::SetBuffersAndCreateHair()
 
 	hairCS->SetShader();
 	hairCS->SetData("vertexData", (void*)sb.Get(), numOfVerts * sizeof(ShaderVertex));
-	hairCS->SetData("hairData", (void*)hb.Get(), numOfVerts * sizeof(HairStrand));
+	hairCS->SetUnorderedAccessView("hairData", hairUAV, 0);
 	hairCS->CopyAllBufferData();
 	hairCS->DispatchByThreads(numOfVerts * 3, 1, 1);
 
@@ -388,6 +388,7 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 		vertexInfo[i].padding = 0;
 	}
 
+
 	// Create the vertex buffer
 	D3D11_BUFFER_DESC sbd;
 	sbd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -404,11 +405,19 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	D3D11_BUFFER_DESC hbd;
 	hbd.Usage = D3D11_USAGE_DEFAULT;
 	hbd.ByteWidth = sizeof(HairStrand) * numVerts; // Number of vertices
-	hbd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	hbd.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
 	hbd.CPUAccessFlags = 0;
 	hbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 	hbd.StructureByteStride = sizeof(HairStrand);
 	device->CreateBuffer(&hbd, 0, hb.GetAddressOf());
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC hairDesc = {};
+	hairDesc.Format = DXGI_FORMAT_UNKNOWN;
+	hairDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	hairDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
+	hairDesc.Buffer.FirstElement = 0;
+	hairDesc.Buffer.NumElements = numVerts;
+	device->CreateUnorderedAccessView(hb.Get(), &hairDesc, hairUAV.GetAddressOf());
 
 	//Create hair index buffer
 	int numIndices = numOfVerts * 3;

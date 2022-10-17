@@ -28,6 +28,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vb;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> sb;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> hb;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> hairUAV;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> ib;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> hairIB;
 	int numIndices;
@@ -37,6 +38,5 @@ private:
 	void CreateBuffers(Vertex* vertArray, int numVerts, unsigned int* indexArray, int numIndices, Microsoft::WRL::ComPtr<ID3D11Device> device);
 	void CalculateTangents(Vertex* verts, int numVerts, unsigned int* indices, int numIndices);
 	void CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::ComPtr<ID3D11Device> device);
-
 };
 
