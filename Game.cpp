@@ -502,12 +502,6 @@ void Game::Update(float deltaTime, float totalTime)
 	{
 		e->Update(deltaTime);
 	}
-	/*
-	for (auto e : entities)
-	{
-		if (e->GetMesh()->GetHasFur())
-			e->CreateHair(device, context);
-	}*/
 }
 
 // --------------------------------------------------------

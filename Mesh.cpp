@@ -372,6 +372,8 @@ void Mesh::SetBuffersAndCreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, 
 	hairCS->SetShader();
 	hairCS->SetShaderResourceView("vertexData", shaderVertexSRV);
 	hairCS->SetUnorderedAccessView("hairData", hairUAV, 0);
+	hairCS->SetFloat("length", .5f);
+	hairCS->SetFloat("width", .005f);
 	hairCS->CopyAllBufferData();
 	hairCS->DispatchByThreads(numOfVerts * 3, 1, 1);
 
