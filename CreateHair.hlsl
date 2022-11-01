@@ -34,10 +34,11 @@ void main( uint3 DTid : SV_DispatchThreadID )
 
 	ShaderVertex currentVert = vertexData[index / 3];
 	float randomVariance = nrand(float2(0.9f, 1.1f));
+	float lengthScalar = randomVariance * length;
 
 	offSets[0] = float3(-width/2.0f, 0, 0.0f);
 	offSets[1] = float3(width/2.0f, 0.0f, 0.0f);
-	offSets[2] = (normalize(currentVert.Normal) * (length * randomVariance));
+	offSets[2] = normalize(currentVert.Normal) * lengthScalar;
 
 	UVs[0] = float2(0, 0);
 	UVs[1] = float2(1, 0);
