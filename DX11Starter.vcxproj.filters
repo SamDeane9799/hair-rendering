@@ -170,6 +170,9 @@
     <None Include="HairGenerics.hlsli">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="HelperMethods.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">

@@ -360,9 +360,6 @@ void Mesh::SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context
 
 	// Draw this mesh
 	context->DrawIndexed(this->numIndices, 0, 0);
-
-	if (hasFur)
-		SetBuffersAndDrawHair(context);
 }
 
 void Mesh::SetBuffersAndCreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
@@ -372,8 +369,8 @@ void Mesh::SetBuffersAndCreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, 
 	hairCS->SetShader();
 	hairCS->SetShaderResourceView("vertexData", shaderVertexSRV);
 	hairCS->SetUnorderedAccessView("hairData", hairUAV, 0);
-	hairCS->SetFloat("length", .5f);
-	hairCS->SetFloat("width", .005f);
+	hairCS->SetFloat("length", 0.5f);
+	hairCS->SetFloat("width", .01f);
 	hairCS->CopyAllBufferData();
 	hairCS->DispatchByThreads(numOfVerts * 3, 1, 1);
 
