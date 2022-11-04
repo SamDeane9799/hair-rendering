@@ -68,6 +68,8 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> ppSampler;
 
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> hairRast;
+
 	DirectX::XMFLOAT4X4 prevView;
 	DirectX::XMFLOAT4X4 prevProj;
 };

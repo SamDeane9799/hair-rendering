@@ -32,7 +32,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> newHairBuffer;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> hairUAV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> hairSRV;
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> hairRast;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> ib;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> hairIB;
 	int numIndices;

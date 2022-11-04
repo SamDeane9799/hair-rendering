@@ -64,6 +64,17 @@ Renderer::Renderer(Microsoft::WRL::ComPtr<ID3D11Device> Device, Microsoft::WRL::
 	additiveBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 	additiveBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	device->CreateBlendState(&additiveBlendDesc, particleBS.GetAddressOf());
+
+	D3D11_RASTERIZER_DESC hairRastDesc; 
+	hairRastDesc.FillMode = D3D11_FILL_SOLID;
+	hairRastDesc.CullMode = D3D11_CULL_NONE;
+	hairRastDesc.FrontCounterClockwise = false;
+	hairRastDesc.DepthBias = 0;
+	hairRastDesc.DepthBiasClamp = 0.0f;
+	hairRastDesc.SlopeScaledDepthBias = 0.0f;
+	hairRastDesc.DepthClipEnable = true;
+	hairRastDesc.ScissorEnable = false;
+	device->CreateRasterizerState(&hairRastDesc, hairRast.GetAddressOf());
 }
 
 Renderer::~Renderer()
@@ -165,7 +176,9 @@ void Renderer::Render(shared_ptr<Camera> camera, vector<shared_ptr<Material>> ma
 			vs->CopyAllBufferData();
 			Assets::GetInstance().GetPixelShader("WhitePS")->SetShader();
 
+			context->RSSetState(hairRast.Get());
 			ge->GetMesh()->SetBuffersAndDrawHair(context);
+			context->RSSetState(0);
 		}
 	}
 

@@ -445,9 +445,12 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	//Create hair index buffer
 	int numIndices = numOfVerts * 3;
 	unsigned int* indicies = new unsigned int[numIndices];
-	for (int i = 0; i < numIndices; i ++)
+	int count = 0;
+	for (int i = 0; i < numIndices; i += 3)
 	{
-		indicies[i] = i;
+		indicies[count++] = i;
+		indicies[count++] = i + 1;
+		indicies[count++] = i + 2;
 	}
 
 	D3D11_SUBRESOURCE_DATA indexData = {};
@@ -459,12 +462,6 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibDesc.ByteWidth = sizeof(unsigned int) * numIndices;
 	device->CreateBuffer(&ibDesc, &indexData, hairIB.GetAddressOf());
-
-	D3D11_RASTERIZER_DESC hairRastDesc;
-	hairRastDesc.CullMode = D3D11_CULL_NONE;
-	hairRastDesc.FillMode = D3D11_FILL_SOLID;
-	hairRastDesc.DepthClipEnable = true;
-	device->CreateRasterizerState(&hairRastDesc, hairRast.GetAddressOf());
 
 	delete[] indicies;
 	delete[] vertexInfo;
