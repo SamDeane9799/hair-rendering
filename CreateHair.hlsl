@@ -44,6 +44,8 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	newStrand.Position = currentVert.Position + offSets[cornerID];
 	newStrand.Normal = currentVert.Normal;
 	newStrand.UV = UVs[cornerID];
+	newStrand.Tangent = currentVert.Tangent;
+	newStrand.padding = 0;
 
 	hairData[index] = newStrand;
 }

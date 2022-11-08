@@ -22,7 +22,7 @@ public:
 	void SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 
 	void SetBuffersAndCreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
-	void SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
+	void SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> normalMap);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vb;

@@ -38,7 +38,7 @@ VertexToPixel main(uint id : SV_VertexID)
 
 	// Make sure the other vectors are in WORLD space, not "local" space
 	output.normal = normalize(mul((float3x3)worldInverseTranspose, input.Normal));
-	//output.tangent = normalize(mul((float3x3)world, input.tangent)); // Tangent doesn't need inverse transpose!
+	output.tangent = normalize(mul((float3x3)world, input.Tangent)); // Tangent doesn't need inverse transpose!
 
 	// Pass the UV through
 	output.uv = input.UV;

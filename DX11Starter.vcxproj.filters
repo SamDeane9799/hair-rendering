@@ -229,7 +229,7 @@
     <FxCompile Include="HairVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="WhitePS.hlsl">
+    <FxCompile Include="HairPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

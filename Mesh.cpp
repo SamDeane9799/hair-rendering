@@ -213,7 +213,7 @@ Mesh::~Mesh(void)
 }
 
 
-void Mesh::SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
+void Mesh::SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> normalMap)
 {
 	// Set buffers in the input assembler
 	UINT stride = 0;
@@ -227,12 +227,10 @@ void Mesh::SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> con
 	vs->SetShaderResourceView("HairData", hairSRV);
 	vs->CopyAllBufferData();
 
-	std::shared_ptr<SimplePixelShader> ps = Assets::GetInstance().GetPixelShader("WhitePS");
-	ps->SetShader();
+	std::shared_ptr<SimplePixelShader> ps = Assets::GetInstance().GetPixelShader("HairPS");
+	ps->SetShaderResourceView("NormalMap", normalMap);
 
 	// Draw this mesh's hair
-	//TODO: Move this into renderer and move the rasterizer desc there as well
-	//context->RSSetState(hairRast.Get());
 	context->DrawIndexed(this->numOfVerts * 3, 0, 0);
 }
 

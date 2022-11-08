@@ -174,10 +174,24 @@ void Renderer::Render(shared_ptr<Camera> camera, vector<shared_ptr<Material>> ma
 			vs->SetMatrix4x4("view", camera->GetView());
 			vs->SetMatrix4x4("projection", camera->GetProjection());
 			vs->CopyAllBufferData();
-			Assets::GetInstance().GetPixelShader("WhitePS")->SetShader();
+			std::shared_ptr<SimplePixelShader> ps = Assets::GetInstance().GetPixelShader("HairPS");
+			ps->SetShader();
+			ps->SetFloat("metalVal", 0.0f);
+			ps->SetFloat("roughnessVal", 0.0f);
+			ps->SetData("lights", (void*)(&lights[0]), sizeof(Light) * (int)lights.size());
+			ps->SetInt("lightCount", lights.size());
+			ps->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
+			ps->SetInt("specIBLTotalMipLevels", sky->GetNumOfMipLevels());
+			ps->SetShaderResourceView("BrdfLookUpMap", sky->GetBrdfLookUp());
+			ps->SetShaderResourceView("IrradianceIBLMap", sky->GetIrradianceMap());
+			ps->SetShaderResourceView("SpecularIBLMap", sky->getConvolvedSpecularMap());
+			ps->SetSamplerState("ClampSampler", ppSampler);
+			ps->CopyAllBufferData();
+
+
 
 			context->RSSetState(hairRast.Get());
-			ge->GetMesh()->SetBuffersAndDrawHair(context);
+			ge->GetMesh()->SetBuffersAndDrawHair(context, ge->GetMaterial()->GetTextureSRV("NormalMap"));
 			context->RSSetState(0);
 		}
 	}
