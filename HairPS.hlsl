@@ -63,10 +63,10 @@ Texture2D NormalMap			: register(t3);
 
 PS_Output main(VertexToPixel input) : SV_TARGET
 {
-	if (input.uv.x > .7f || input.uv.x > 0.3f)
+	/*if (input.uv.x > .7f || input.uv.x > 0.3f)
 	{
 		discard;
-	}
+	}*/
 	PS_Output output;
 
 	float sinVal = input.uv.y * (3.14159265f/2.0f);

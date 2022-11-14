@@ -231,7 +231,7 @@ void Mesh::SetBuffersAndDrawHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> con
 	ps->SetShaderResourceView("NormalMap", normalMap);
 
 	// Draw this mesh's hair
-	context->DrawIndexed(this->numOfVerts * 3, 0, 0);
+	context->DrawIndexed(this->numOfVerts * 5, 0, 0);
 }
 
 void Mesh::CreateBuffers(Vertex* vertArray, int numVerts, unsigned int* indexArray, int numIndices, Microsoft::WRL::ComPtr<ID3D11Device> device)
@@ -441,14 +441,20 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	device->CreateUnorderedAccessView(initialHairBuffer.Get(), &hairDesc, hairUAV.GetAddressOf());
 
 	//Create hair index buffer
-	int numIndices = numOfVerts * 3;
+	int numIndices = numOfVerts * 9;
 	unsigned int* indicies = new unsigned int[numIndices];
 	int count = 0;
-	for (int i = 0; i < numIndices; i += 3)
+	for (int i = 0; i < numOfVerts; i += 5)
 	{
 		indicies[count++] = i;
 		indicies[count++] = i + 1;
 		indicies[count++] = i + 2;
+		indicies[count++] = i + 2;
+		indicies[count++] = i + 1;
+		indicies[count++] = i + 3;
+		indicies[count++] = i + 1;
+		indicies[count++] = i + 4;
+		indicies[count++] = i + 3;
 	}
 
 	D3D11_SUBRESOURCE_DATA indexData = {};
