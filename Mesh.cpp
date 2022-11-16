@@ -444,7 +444,7 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	int numIndices = numOfVerts * 9;
 	unsigned int* indicies = new unsigned int[numIndices];
 	int count = 0;
-	for (int i = 0; i < numOfVerts; i += 5)
+	for (int i = 0; i < numOfVerts * 5; i += 5)
 	{
 		indicies[count++] = i;
 		indicies[count++] = i + 1;
