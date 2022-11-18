@@ -42,8 +42,8 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	offSets[0] = float3(-width / 2.0f, 0, 0.0f);
 	offSets[1] = float3(-width / 2.0f, 0, 0) + (lengthVector * 0.5f);
 	offSets[2] = float3(width / 2.0f, 0.0f, 0.0f);
-	offSets[3] = float3(width / 2.0f, 0, 0)+ (lengthVector * 0.5f);
-	offSets[4] = lengthVector;
+	offSets[3] = float3(width / 2.0f, 0, 0) + (lengthVector * 0.5f);
+	offSets[4] = lengthVector; //+ (normalize(currentVert.Tangent) * ((random(UVs[cornerID]) * 0.06f) - 0.03f));
 
 
 	HairStrand newStrand;
