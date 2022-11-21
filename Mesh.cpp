@@ -360,6 +360,35 @@ void Mesh::SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context
 	context->DrawIndexed(this->numIndices, 0, 0);
 }
 
+void Mesh::SimulateHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Microsoft::WRL::ComPtr<ID3D11Device> device, float deltaTime, XMFLOAT3 force)
+{
+	std::shared_ptr<SimpleComputeShader> simulateCS = Assets::GetInstance().GetComputeShader("SimulateHair");
+	simulateCS->SetShader();
+	simulateCS->SetFloat("deltaTime", deltaTime);
+	simulateCS->SetFloat3("force", force);
+	simulateCS->SetUnorderedAccessView("hairData", hairUAV, 0);
+	simulateCS->CopyAllBufferData();
+	simulateCS->DispatchByThreads(numOfVerts * 3, 1, 1);
+
+
+	D3D11_BUFFER_DESC newHairBufferDesc;
+	newHairBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	newHairBufferDesc.ByteWidth = (sizeof(HairStrand)) * numOfVerts; // Number of vertices
+	newHairBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	newHairBufferDesc.CPUAccessFlags = 0;
+	newHairBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	newHairBufferDesc.StructureByteStride = sizeof(HairStrand);
+	device->CreateBuffer(&newHairBufferDesc, 0, newHairBuffer.GetAddressOf());
+	context->CopyResource(newHairBuffer.Get(), initialHairBuffer.Get());
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC hairSRVDesc = {};
+	hairSRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	hairSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	hairSRVDesc.Buffer.NumElements = numOfVerts;
+	hairSRVDesc.Buffer.FirstElement = 0;
+	device->CreateShaderResourceView(newHairBuffer.Get(), &hairSRVDesc, hairSRV.GetAddressOf());
+}
+
 void Mesh::SetBuffersAndCreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
 {
 	std::shared_ptr<SimpleComputeShader> hairCS = Assets::GetInstance().GetComputeShader("CreateHair");

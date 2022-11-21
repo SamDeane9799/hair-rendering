@@ -498,6 +498,17 @@ void Game::Update(float deltaTime, float totalTime)
 	input.SetGuiKeyboardCapture(io.WantCaptureKeyboard);
 	input.SetGuiMouseCapture(io.WantCaptureMouse);
 
+	XMFLOAT3 currentForce = XMFLOAT3(0, 0, 0);
+	if (input.KeyDown(VK_RIGHT))
+		currentForce = XMFLOAT3(.1f, 0, 0);
+	else if (input.KeyDown(VK_LEFT))
+		currentForce = XMFLOAT3(-.1f, 0, 0);
+
+	for (auto e : entities) {
+		if (e->GetMesh()->GetHasFur())
+			e->GetMesh()->SimulateHair(context, device, deltaTime, currentForce);
+	}
+
 	for (auto e : emitter)
 	{
 		e->Update(deltaTime);

@@ -43,7 +43,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	offSets[1] = float3(-width / 2.0f, 0, 0) + (lengthVector * 0.5f);
 	offSets[2] = float3(width / 2.0f, 0.0f, 0.0f);
 	offSets[3] = float3(width / 2.0f, 0, 0) + (lengthVector * 0.5f);
-	offSets[4] = lengthVector; //+ (normalize(currentVert.Tangent) * ((random(UVs[cornerID]) * 0.06f) - 0.03f));
+	offSets[4] = lengthVector;
 
 
 	HairStrand newStrand;
@@ -51,7 +51,9 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	newStrand.Normal = currentVert.Normal;
 	newStrand.UV = UVs[cornerID];
 	newStrand.Tangent = currentVert.Tangent;
-	newStrand.padding = 0;
+	newStrand.Speed = float3(0, 0, 0);
+	newStrand.Acceleration = float3(0, 0, 0);
+	newStrand.padding = float3(0, 0, 0);
 
 	hairData[index] = newStrand;
 }

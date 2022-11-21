@@ -1,13 +1,13 @@
 #include "HairGenerics.hlsli"
 #include "HairPhysicsHelper.hlsli"
 
-cbuffer HAIR_PHYSICS_CONST	: register(b0)
+cbuffer HAIR_PHYSICS_CONSTANT	: register(b0)
 {
 	float2x2 constraints;
 	float3 force;
-	float mass;
 	float deltaTime;
 }
+
 RWStructuredBuffer<HairStrand> hairData	: register(u0);
 
 [numthreads(8, 8, 1)]
@@ -20,14 +20,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	int index = DTid.x;
 	HairStrand strandInfo = hairData[index];
 
-	//Resulting force
-	float3 torque = Torque(strandInfo.Position, strandInfo.Tangent, force);
+	strandInfo = SimulateHair(strandInfo, force, deltaTime);
 
-	float3 resultingForce = torque;
-
-	float3 acceleration = AccelerationCalc(strandInfo.Acceleration, resultingForce, mass);
-	float3 speed = SpeedCalc(acceleration, strandInfo.Speed, deltaTime);
-
-	//float3 offset = 
-
+	hairData[index] = strandInfo;
 }

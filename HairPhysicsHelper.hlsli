@@ -1,14 +1,15 @@
 // Include guard
 #ifndef _HAIRPHYSICSHELPER_HLSL
 #define _HAIRPHYSICSHELPER_HLSL
+#define HAIR_WEIGHT 0.5f
 /*
 * a = lever arm
 * b = vector connected to lever arm
 * F = Force vector being applied
 */
-float3 Toruqe(float3 a, float3 b, float3 F) {
+float3 Torque(float3 a, float3 b, float3 F) {
 	float theta = acos(dot(a, b) / abs(a) * abs(b));
-	float radius = a.magnitude;
+	float radius = length(a);
 
 	float3 torque = radius * F * (sin(theta));
 	return torque;
@@ -41,5 +42,16 @@ float3 PositionCalc(float3 currentPosition, float3 speed, float deltaTime) {
 	return currentPosition + (speed * deltaTime);
 }
 
-float3 SimulateHair(float3 position, float3 tangent, float3 force, float deltaTime, float3 currentSpeed, float3 currentAcceleration)
+HairStrand SimulateHair(HairStrand strand, float3 force, float deltaTime)
+{
+	float3 torque = Torque(strand.Position, strand.Tangent, force);
+
+	float3 acceleration = AccelerationCalc(strand.Acceleration, torque, HAIR_WEIGHT);
+	float3 speed = SpeedCalc(strand.Acceleration, strand.Speed, deltaTime);
+
+	strand.Speed = speed;
+	strand.Acceleration = acceleration;
+	strand.Position = strand.Position + (speed * deltaTime);
+	return strand;
+}
 #endif
