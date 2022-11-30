@@ -15,5 +15,5 @@ struct HairStrand
 	DirectX::XMFLOAT3 Acceleration;	// Simulating physics
 	DirectX::XMFLOAT3 Speed;	// Simulating physics
 	DirectX::XMFLOAT2 UV;			// Texture mapping
-	DirectX::XMFLOAT3 padding;
+	DirectX::XMFLOAT3 OriginalPosition;
 };

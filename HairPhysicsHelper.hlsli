@@ -1,7 +1,7 @@
 // Include guard
 #ifndef _HAIRPHYSICSHELPER_HLSL
 #define _HAIRPHYSICSHELPER_HLSL
-#define HAIR_WEIGHT 0.5f
+#define HAIR_WEIGHT 0.1f
 /*
 * a = lever arm
 * b = vector connected to lever arm
@@ -42,9 +42,18 @@ float3 PositionCalc(float3 currentPosition, float3 speed, float deltaTime) {
 	return currentPosition + (speed * deltaTime);
 }
 
-HairStrand SimulateHair(HairStrand strand, float3 force, float deltaTime)
+HairStrand SimulateHair(HairStrand strand, float3 force, float deltaTime, float2x3 constraints)
 {
+	//Find how close our position is to a constraint
+	//If we've reached it or surpassed it we want to eliminate force in that direction
+	//And stop any movement/acceleration in that direction
+	float3 minConstraintDiff = clamp(ceil(constraints[0] - strand.Position), float3(0, 0, 0), float3(1, 1, 1));
+	float3 maxConstraintDiff = clamp(ceil(constraints[1] - strand.Position), float3(0, 0, 0), float3(1, 1, 1));
+
+	force = force * minConstraintDiff * maxConstraintDiff;
+
 	float3 torque = Torque(strand.Position, strand.Tangent, force);
+	//Create force back towards original position
 
 	float3 acceleration = AccelerationCalc(strand.Acceleration, torque, HAIR_WEIGHT);
 	float3 speed = SpeedCalc(strand.Acceleration, strand.Speed, deltaTime);

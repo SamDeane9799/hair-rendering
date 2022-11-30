@@ -505,8 +505,9 @@ void Game::Update(float deltaTime, float totalTime)
 		currentForce = XMFLOAT3(-.1f, 0, 0);
 
 	for (auto e : entities) {
-		if (e->GetMesh()->GetHasFur())
+		if (e->GetMesh()->GetHasFur()) {
 			e->GetMesh()->SimulateHair(context, device, deltaTime, currentForce);
+		}
 	}
 
 	for (auto e : emitter)

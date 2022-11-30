@@ -6,5 +6,5 @@ struct HairStrand
 	float2 UV;			// Texture mapping
 	float3 Acceleration;// Physics Simulation
 	float3 Speed;		//Physics Simulation
-	float3 padding;
+	float3 OriginalPosition;
 };

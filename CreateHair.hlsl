@@ -53,7 +53,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
 	newStrand.Tangent = currentVert.Tangent;
 	newStrand.Speed = float3(0, 0, 0);
 	newStrand.Acceleration = float3(0, 0, 0);
-	newStrand.padding = float3(0, 0, 0);
+	newStrand.OriginalPosition = newStrand.Position;
 
 	hairData[index] = newStrand;
 }
