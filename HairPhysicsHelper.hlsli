@@ -47,10 +47,15 @@ HairStrand SimulateHair(HairStrand strand, float3 force, float deltaTime, float2
 	//Find how close our position is to a constraint
 	//If we've reached it or surpassed it we want to eliminate force in that direction
 	//And stop any movement/acceleration in that direction
-	float3 minConstraintDiff = clamp(ceil(constraints[0] - strand.Position), float3(0, 0, 0), float3(1, 1, 1));
-	float3 maxConstraintDiff = clamp(ceil(constraints[1] - strand.Position), float3(0, 0, 0), float3(1, 1, 1));
+	float3 min = float3(constraints._m00, constraints._m01, constraints._m02);
+	float3 minConstraintDiff = clamp(ceil(abs(min - strand.Position)), float3(0, 0, 0), float3(1, 1, 1));
+	float3 max = float3(constraints._m10, constraints._m11, constraints._m12);
+	float3 maxConstraintDiff = clamp(ceil(abs(max - strand.Position)), float3(0, 0, 0), float3(1, 1, 1));
+	float3 constraintMultiplier = maxConstraintDiff * minConstraintDiff;
 
-	force = force * minConstraintDiff * maxConstraintDiff;
+	force = force * constraintMultiplier;
+	strand.Speed = strand.Speed * constraintMultiplier;
+	strand.Acceleration = strand.Acceleration * constraintMultiplier;
 
 	float3 torque = Torque(strand.Position, strand.Tangent, force);
 	//Create force back towards original position
