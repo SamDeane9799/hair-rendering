@@ -22,7 +22,7 @@ StructuredBuffer<ShaderVertex> vertexData;
 [numthreads(8, 8, 1)]
 void main( uint3 DTid : SV_DispatchThreadID )
 {
-	int index = DTid.x;
+	int index = DTid.x * DTid.y;
 	int cornerID = index % 5;
 	float3 offSets[5];
 	float2 UVs[5];

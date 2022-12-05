@@ -14,35 +14,29 @@ void main( uint3 DTid : SV_DispatchThreadID )
 {
 	//Figure out if we're a base vertex
 	//ALTERNATIVE: Don't figure it out? with correct calculations we shouldn't move
-	int index = DTid.x;
-	HairStrand strandInfo = hairData[index];/*
-	float3 mins[] = {
-		float3(strandInfo.OriginalPosition.x, strandInfo.OriginalPosition.y, strandInfo.OriginalPosition.z),
-		float3(strandInfo.OriginalPosition.x - 0.2f, strandInfo.OriginalPosition.y - 0.2f, strandInfo.OriginalPosition.z - 0.2f),
-		float3(strandInfo.OriginalPosition.x, strandInfo.OriginalPosition.y, strandInfo.OriginalPosition.z),
-		float3(strandInfo.OriginalPosition.x - 0.2f, strandInfo.OriginalPosition.y - 0.2f, strandInfo.OriginalPosition.z - 0.2f),
-		float3(strandInfo.OriginalPosition.x - 0.5f, strandInfo.OriginalPosition.y - 0.5f, strandInfo.OriginalPosition.z - 0.5f)
-	};*/
+	int index = DTid.x * DTid.y;
+	HairStrand strandInfo = hairData[index];
+
 	float2x3 constraints[5] = { 
 		{
-			float3(strandInfo.OriginalPosition.x, strandInfo.OriginalPosition.y, strandInfo.OriginalPosition.z),
-			float3(strandInfo.OriginalPosition.x, strandInfo.OriginalPosition.y, strandInfo.OriginalPosition.z)
+			strandInfo.OriginalPosition.x, strandInfo.OriginalPosition.y, strandInfo.OriginalPosition.z,
+			strandInfo.OriginalPosition.x, strandInfo.OriginalPosition.y, strandInfo.OriginalPosition.z
 		}, {
-			strandInfo.OriginalPosition.x - 0.2f, strandInfo.OriginalPosition.y - 0.2f, strandInfo.OriginalPosition.z - 0.2f,
-			strandInfo.OriginalPosition.x + 0.2f, strandInfo.OriginalPosition.y + 0.2f, strandInfo.OriginalPosition.z + 0.2f
+			strandInfo.OriginalPosition.x - 0.05f, strandInfo.OriginalPosition.y - 0.05f, strandInfo.OriginalPosition.z - 0.05f,
+			strandInfo.OriginalPosition.x + 0.05f, strandInfo.OriginalPosition.y + 0.05f, strandInfo.OriginalPosition.z + 0.05f
 		}, {
 			strandInfo.OriginalPosition.x, strandInfo.OriginalPosition.y, strandInfo.OriginalPosition.z,
 			strandInfo.OriginalPosition.x, strandInfo.OriginalPosition.y, strandInfo.OriginalPosition.z
 		}, {
-			strandInfo.OriginalPosition.x - 0.2f, strandInfo.OriginalPosition.y - 0.2f, strandInfo.OriginalPosition.z - 0.2f,
-				strandInfo.OriginalPosition.x + 0.2f, strandInfo.OriginalPosition.y + 0.2f, strandInfo.OriginalPosition.z + 0.2f
+			strandInfo.OriginalPosition.x - 0.05f, strandInfo.OriginalPosition.y - 0.05f, strandInfo.OriginalPosition.z - 0.05f,
+			strandInfo.OriginalPosition.x + 0.05f, strandInfo.OriginalPosition.y + 0.05f, strandInfo.OriginalPosition.z + 0.05f
 		}, {
-			strandInfo.OriginalPosition.x - 0.5f, strandInfo.OriginalPosition.y - 0.5f, strandInfo.OriginalPosition.z - 0.5f,
-			strandInfo.OriginalPosition.x + 0.5f, strandInfo.OriginalPosition.y + 0.5f, strandInfo.OriginalPosition.z + 0.5f
+			strandInfo.OriginalPosition.x - 0.1f, strandInfo.OriginalPosition.y - 0.1f, strandInfo.OriginalPosition.z - 0.1f,
+			strandInfo.OriginalPosition.x + 0.1f, strandInfo.OriginalPosition.y + 0.1f, strandInfo.OriginalPosition.z + 0.1f
 		} 
 	};
-
-	strandInfo = SimulateHair(strandInfo, force, deltaTime, constraints[index % 5]);
+	float2x3 constraint = constraints[index % 5];
+	strandInfo = SimulateHair(strandInfo, force, deltaTime, constraint);
 
 	hairData[index] = strandInfo;
 }

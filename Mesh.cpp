@@ -368,7 +368,7 @@ void Mesh::SimulateHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Mic
 	simulateCS->SetFloat3("force", force);
 	simulateCS->SetUnorderedAccessView("hairData", hairUAV, 0);
 	simulateCS->CopyAllBufferData();
-	simulateCS->DispatchByThreads(numOfVerts * 3, 1, 1);
+	simulateCS->DispatchByThreads(numOfVerts * 5, 1, 1);
 
 
 	D3D11_BUFFER_DESC newHairBufferDesc;
@@ -399,11 +399,11 @@ void Mesh::SetBuffersAndCreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, 
 	hairCS->SetFloat("length", 0.5f);
 	hairCS->SetFloat("width", .01f);
 	hairCS->CopyAllBufferData();
-	hairCS->DispatchByThreads(numOfVerts * 3, 1, 1);
+	hairCS->DispatchByThreads(numOfVerts * 5, 1, 1);
 
 	D3D11_BUFFER_DESC newHairBufferDesc;
 	newHairBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	newHairBufferDesc.ByteWidth = (sizeof(HairStrand)) * numOfVerts; // Number of vertices
+	newHairBufferDesc.ByteWidth = (sizeof(HairStrand)) * numOfVerts * 5; // Number of vertices
 	newHairBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	newHairBufferDesc.CPUAccessFlags = 0;
 	newHairBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -446,7 +446,7 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderVertexDesc = {};
 	shaderVertexDesc.Format = DXGI_FORMAT_UNKNOWN;
 	shaderVertexDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-	shaderVertexDesc.Buffer.NumElements = numVerts;
+	shaderVertexDesc.Buffer.NumElements = numVerts * 5;
 	shaderVertexDesc.Buffer.FirstElement = 0;
 	shaderVertexDesc.Buffer.ElementWidth = sizeof(ShaderVertex);
 	device->CreateShaderResourceView(sb.Get(), &shaderVertexDesc, shaderVertexSRV.GetAddressOf());
