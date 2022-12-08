@@ -373,7 +373,7 @@ void Mesh::SimulateHair(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Mic
 
 	D3D11_BUFFER_DESC newHairBufferDesc;
 	newHairBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	newHairBufferDesc.ByteWidth = (sizeof(HairStrand)) * numOfVerts; // Number of vertices
+	newHairBufferDesc.ByteWidth = (sizeof(HairStrand)) * numOfVerts * 5; // Number of vertices
 	newHairBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	newHairBufferDesc.CPUAccessFlags = 0;
 	newHairBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -454,7 +454,7 @@ void Mesh::CreateHairBuffers(Vertex* vertArray, int numVerts, Microsoft::WRL::Co
 	//Create buffer for information on hair
 	D3D11_BUFFER_DESC hbd;
 	hbd.Usage = D3D11_USAGE_DEFAULT;
-	hbd.ByteWidth = sizeof(HairStrand) * numVerts; 
+	hbd.ByteWidth = sizeof(HairStrand) * numVerts * 5; 
 	hbd.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
 	hbd.CPUAccessFlags = 0;
 	hbd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;

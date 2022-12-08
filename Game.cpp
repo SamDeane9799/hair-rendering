@@ -500,9 +500,9 @@ void Game::Update(float deltaTime, float totalTime)
 
 	XMFLOAT3 currentForce = XMFLOAT3(0, 0, 0);
 	if (input.KeyDown(VK_RIGHT))
-		currentForce = XMFLOAT3(.1f, 0, 0);
+		currentForce.x = 1.0f;
 	else if (input.KeyDown(VK_LEFT))
-		currentForce = XMFLOAT3(-.1f, 0, 0);
+		currentForce.x = -1.0f;
 
 	for (auto e : entities) {
 		if (e->GetMesh()->GetHasFur()) {

@@ -10,11 +10,11 @@ cbuffer HAIR_PHYSICS_CONSTANT	: register(b0)
 RWStructuredBuffer<HairStrand> hairData	: register(u0);
 
 [numthreads(8, 8, 1)]
-void main( uint3 DTid : SV_DispatchThreadID )
+void main(uint3 DTid : SV_DispatchThreadID)
 {
 	//Figure out if we're a base vertex
 	//ALTERNATIVE: Don't figure it out? with correct calculations we shouldn't move
-	int index = DTid.x * DTid.y;
+	int index = DTid.x;
 	HairStrand strandInfo = hairData[index];
 
 	float2x3 constraints[5] = { 
@@ -31,8 +31,8 @@ void main( uint3 DTid : SV_DispatchThreadID )
 			strandInfo.OriginalPosition.x - 0.05f, strandInfo.OriginalPosition.y - 0.05f, strandInfo.OriginalPosition.z - 0.05f,
 			strandInfo.OriginalPosition.x + 0.05f, strandInfo.OriginalPosition.y + 0.05f, strandInfo.OriginalPosition.z + 0.05f
 		}, {
-			strandInfo.OriginalPosition.x - 0.1f, strandInfo.OriginalPosition.y - 0.1f, strandInfo.OriginalPosition.z - 0.1f,
-			strandInfo.OriginalPosition.x + 0.1f, strandInfo.OriginalPosition.y + 0.1f, strandInfo.OriginalPosition.z + 0.1f
+			strandInfo.OriginalPosition.x - 0.2f, strandInfo.OriginalPosition.y - 0.2f, strandInfo.OriginalPosition.z - 0.2f,
+			strandInfo.OriginalPosition.x + 0.2f, strandInfo.OriginalPosition.y + 0.2f, strandInfo.OriginalPosition.z + 0.2f
 		} 
 	};
 	float2x3 constraint = constraints[index % 5];
