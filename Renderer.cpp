@@ -9,7 +9,7 @@
 using namespace std;
 using namespace DirectX;
 Renderer::Renderer(Microsoft::WRL::ComPtr<ID3D11Device> Device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> Context, Microsoft::WRL::ComPtr<IDXGISwapChain> SwapChain, Microsoft::WRL::ComPtr<ID3D11RenderTargetView> BackBufferRTV,
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> DepthBufferDSV, unsigned int WindowWidth, unsigned int WindowHeight, std::shared_ptr<Sky> SkyPTR, std::vector<std::shared_ptr<GameEntity>>& Entities, std::vector<std::shared_ptr<Emitter>>& Emitters,
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> DepthBufferDSV, unsigned int WindowWidth, unsigned int WindowHeight, std::shared_ptr<Sky> SkyPTR, std::shared_ptr<Terrain> terrainPTR, std::vector<std::shared_ptr<GameEntity>>& Entities, std::vector<std::shared_ptr<Emitter>>& Emitters,
 	std::vector<Light>& Lights, HWND hWnd)
 	:
 		lights(Lights),
@@ -24,6 +24,7 @@ Renderer::Renderer(Microsoft::WRL::ComPtr<ID3D11Device> Device, Microsoft::WRL::
 	windowWidth = WindowWidth;
 	windowHeight = WindowHeight;
 	sky = SkyPTR;
+	terrain = terrainPTR;
 	
 	motionBlurNeighborhoodSamples = 16;
 	motionBlurMax = 16;
@@ -396,6 +397,9 @@ void Renderer::DrawUI(vector<shared_ptr<Material>> materials, float deltaTime)
 		ImGui::DragInt("Motion Blur Samples", &motionBlurNeighborhoodSamples, 1, 0, 64);
 		ImGui::DragInt("Max Motion Blur", &motionBlurMax, 1, 0, 64);
 		
+	}
+	if (ImGui::CollapsingHeader("Terrain")) {
+		ImGui::Image((void*)terrain->GetHeightSRV().Get(), ImVec2(terrain->GetDimension(), terrain->GetDimension()));
 	}
 	ImGui::End();
 	ImGui::Render();

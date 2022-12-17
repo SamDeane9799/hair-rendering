@@ -102,7 +102,7 @@ void Game::Init()
 		3.0f,		// Move speed
 		1.0f,		// Mouse look
 		this->width / (float)this->height); // Aspect ratio
-	DXRenderer = std::make_unique<Renderer>(device, context, swapChain, backBufferRTV, depthStencilView, width, height, sky, entities, emitter, lights, hWnd);
+	DXRenderer = std::make_unique<Renderer>(device, context, swapChain, backBufferRTV, depthStencilView, width, height, sky, terrain, entities, emitter, lights, hWnd);
 }
 
 
@@ -148,6 +148,8 @@ void Game::LoadAssetsAndCreateEntities()
 		samplerOptions,
 		device,
 		context);
+
+	
 
 	// Create PBR materials
 	std::shared_ptr<Material> cobbleMat2xPBR = std::make_shared<Material>(instance.GetPixelShader("PixelShaderPBR"), instance.GetVertexShader("VertexShader"), "Cobble2x PBR", XMFLOAT3(1, 1, 1), XMFLOAT2(2, 2));
@@ -280,6 +282,12 @@ void Game::LoadAssetsAndCreateEntities()
 	hairTestMat->AddTextureSRV("MetalMap", instance.GetTexture("rough_metal"));
 	materials.push_back(hairTestMat);
 
+	terrain = std::make_shared<Terrain>(
+		instance.GetMesh("Cube"),
+		IBLTestMat1,
+		256,
+		device,
+		context);
 
 
 	// === Create the PBR entities =====================================

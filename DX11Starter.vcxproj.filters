@@ -84,6 +84,9 @@
     <ClCompile Include="Emitter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vertex.h">
@@ -161,6 +164,9 @@
     <ClInclude Include="ShaderVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -236,6 +242,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="SimulateHair.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TerrainGeneration.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

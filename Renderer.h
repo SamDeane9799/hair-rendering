@@ -11,6 +11,7 @@
 #include "Lights.h"
 #include "Emitter.h"
 #include "Sky.h"
+#include "Terrain.h"
 #include <wrl/client.h> // Used for ComPtr - a smart pointer for COM objects
 #include <memory>
 
@@ -28,7 +29,7 @@ class Renderer
 {
 public:
 	Renderer(Microsoft::WRL::ComPtr<ID3D11Device> Device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> Context, Microsoft::WRL::ComPtr<IDXGISwapChain> SwapChain, Microsoft::WRL::ComPtr<ID3D11RenderTargetView> BackBufferRTV,
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> DepthBufferDSV, unsigned int WindowWidth, unsigned int WindowHeight, std::shared_ptr<Sky> SkyPTR, std::vector<std::shared_ptr<GameEntity>>& Entities, std::vector<std::shared_ptr<Emitter>>& Emitters,
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> DepthBufferDSV, unsigned int WindowWidth, unsigned int WindowHeight, std::shared_ptr<Sky> SkyPTR, std::shared_ptr<Terrain> terrainPTR, std::vector<std::shared_ptr<GameEntity>>& Entities, std::vector<std::shared_ptr<Emitter>>& Emitters,
 		std::vector<Light>& Lights, HWND hWnd);
 	~Renderer();
 	void PreResize();
@@ -59,6 +60,7 @@ private:
 	int motionBlurNeighborhoodSamples;
 	int motionBlurMax;
 	std::shared_ptr<Sky> sky;
+	std::shared_ptr<Terrain> terrain;
 	std::vector<std::shared_ptr<GameEntity>>& entities;
 	std::vector<std::shared_ptr<Emitter>>& emitters;
 	std::vector<Light>& lights;

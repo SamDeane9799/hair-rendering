@@ -11,6 +11,7 @@
 #include "Sky.h"
 #include "Renderer.h"
 #include "Emitter.h"
+#include "Terrain.h"
 
 #include <DirectXMath.h>
 #include <wrl/client.h> // Used for ComPtr - a smart pointer for COM objects
@@ -53,6 +54,7 @@ private:
 
 	// Skybox
 	std::shared_ptr<Sky> sky;
+	std::shared_ptr<Terrain> terrain;
 
 	// General helpers for setup and drawing
 	void GenerateLights();
