@@ -282,12 +282,15 @@ void Game::LoadAssetsAndCreateEntities()
 	hairTestMat->AddTextureSRV("MetalMap", instance.GetTexture("rough_metal"));
 	materials.push_back(hairTestMat);
 
+	std::shared_ptr<Material> terrainMat = std::make_shared<Material>(instance.GetPixelShader("TerrainPS"), instance.GetVertexShader("TerrainVS"), "Terrain Mat", XMFLOAT3(1, 1, 1));
+	terrainMat->AddSampler("BasicSampler", samplerOptions);
+	materials.push_back(terrainMat);
+
 	terrain = std::make_shared<Terrain>(
-		instance.GetMesh("Cube"),
-		IBLTestMat1,
+		instance.GetMesh("plane"),
+		terrainMat,
 		256,
-		device,
-		context);
+		device);
 
 
 	// === Create the PBR entities =====================================
@@ -322,7 +325,8 @@ void Game::LoadAssetsAndCreateEntities()
 	entities.push_back(bronzeSpherePBR);
 	entities.push_back(roughSpherePBR);
 	entities.push_back(woodSpherePBR);
-	entities.push_back(hairEntity);
+	//entities.push_back(hairEntity);
+	entities.push_back(terrain);
 
 	std::shared_ptr<GameEntity> iblTestSphere1 = std::make_shared<GameEntity>(instance.GetMesh("sphere"), IBLTestMat1);
 	iblTestSphere1->GetTransform()->SetPosition(-2, -.5f, 0);
@@ -511,7 +515,6 @@ void Game::Update(float deltaTime, float totalTime)
 		currentForce.x = 1.0f;
 	else if (input.KeyDown(VK_LEFT))
 		currentForce.x = -1.0f;
-
 	for (auto e : entities) {
 		if (e->GetMesh()->GetHasFur()) {
 			e->GetMesh()->SimulateHair(context, device, deltaTime, currentForce);

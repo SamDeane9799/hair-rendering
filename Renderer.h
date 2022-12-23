@@ -74,5 +74,8 @@ private:
 
 	DirectX::XMFLOAT4X4 prevView;
 	DirectX::XMFLOAT4X4 prevProj;
+
+	const int terrainGenDimensions[5] = {64, 128, 256, 512, 1024};
+	int terrainDimensions;
 };
 

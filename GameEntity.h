@@ -18,7 +18,7 @@ public:
 	void SetMaterial(std::shared_ptr<Material> newMaterial);
 	Transform* GetTransform();
 
-	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::shared_ptr<Camera> camera);
+	virtual void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::shared_ptr<Camera> camera);
 	void CreateHair(Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 
 private:

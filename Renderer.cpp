@@ -25,6 +25,12 @@ Renderer::Renderer(Microsoft::WRL::ComPtr<ID3D11Device> Device, Microsoft::WRL::
 	windowHeight = WindowHeight;
 	sky = SkyPTR;
 	terrain = terrainPTR;
+	for (int i = 0; i < sizeof(terrainGenDimensions) / sizeof(int); i++)
+	{
+		if (terrainGenDimensions[i] == terrain->GetDimension()) {
+			terrainDimensions = i;
+		}
+	}
 	
 	motionBlurNeighborhoodSamples = 16;
 	motionBlurMax = 16;
@@ -399,7 +405,15 @@ void Renderer::DrawUI(vector<shared_ptr<Material>> materials, float deltaTime)
 		
 	}
 	if (ImGui::CollapsingHeader("Terrain")) {
-		ImGui::Image((void*)terrain->GetHeightSRV().Get(), ImVec2(terrain->GetDimension(), terrain->GetDimension()));
+		ImGui::Image((void*)terrain->GetHeightSRV().Get(), ImVec2(256, 256));
+
+		for (int i = 0; i < sizeof(terrainGenDimensions) / sizeof(int); i++)
+		{
+			if (ImGui::RadioButton(to_string(terrainGenDimensions[i]).c_str(), terrainDimensions == i)) {
+				terrainDimensions = i;
+				terrain->CreateTerrain(terrainGenDimensions[i], device);
+			}
+		}
 	}
 	ImGui::End();
 	ImGui::Render();
