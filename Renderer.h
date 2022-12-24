@@ -77,5 +77,8 @@ private:
 
 	const int terrainGenDimensions[5] = {64, 128, 256, 512, 1024};
 	int terrainDimensions;
+
+	const float frequencyOptions[3] = { 1.0f, 3.0f, 7.0f };
+	float frequency;
 };
 

@@ -3,11 +3,11 @@
 class Terrain : public GameEntity
 {
 public:
-		Terrain(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, float dimension, Microsoft::WRL::ComPtr<ID3D11Device> device);
+		Terrain(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Microsoft::WRL::ComPtr<ID3D11Device> device, float dimension = 256, float frequency = 1.0f);
 		inline float GetDimension() { return dimension; }
 		inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetHeightSRV() { return heightSRV; }
 
-		void CreateTerrain(float dimension, Microsoft::WRL::ComPtr<ID3D11Device> device);
+		void CreateTerrain(float dimension, float frequency, Microsoft::WRL::ComPtr<ID3D11Device> device);
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> heightMap;
@@ -21,5 +21,6 @@ private:
 	void CreateBufferResources(float dimension, Microsoft::WRL::ComPtr<ID3D11Device> device);
 
 	float dimension;
+	float frequency;
 };
 

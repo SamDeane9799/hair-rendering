@@ -289,7 +289,6 @@ void Game::LoadAssetsAndCreateEntities()
 	terrain = std::make_shared<Terrain>(
 		instance.GetMesh("plane"),
 		terrainMat,
-		256,
 		device);
 
 

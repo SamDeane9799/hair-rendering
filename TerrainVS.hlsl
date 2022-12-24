@@ -44,7 +44,7 @@ VertexToPixel main(VertexShaderInput input)
 	// Set up output
 	VertexToPixel output;
 
-	float height = HeightMap.SampleLevel(BasicSampler, input.uv, 0) * 5.0f;
+	float height = HeightMap.SampleLevel(BasicSampler, input.uv, 0) * 20.0f;
 	output.elevation = height / 5.0f;
 	float3 newPosition = input.position + float3(0, height, 0);
 

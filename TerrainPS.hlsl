@@ -23,6 +23,6 @@ struct VertexToPixel
 PS_Output main(VertexToPixel input)
 {
 	PS_Output output;
-	output.color = float4(input.elevation, input.elevation, input.elevation, 1.0f);
+	output.color = float4(input.elevation / 20.0f, input.elevation / 20.0f, input.elevation / 20.0f, 1.0f);
 	return output;
 }

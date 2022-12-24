@@ -2,19 +2,20 @@
 #include "SimpleShader.h"
 #include "Assets.h"
 
-Terrain::Terrain(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, float dimension, Microsoft::WRL::ComPtr<ID3D11Device> device)
+Terrain::Terrain(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, Microsoft::WRL::ComPtr<ID3D11Device> device, float dimension, float frequency)
 	:GameEntity(mesh, material)
 {
-	CreateTerrain(dimension, device);
+	CreateTerrain(dimension, frequency, device);
 
 	GetTransform()->MoveAbsolute(0, -5, 0);
 	GetTransform()->SetScale(10, 1, 10);
 }
 
-void Terrain::CreateTerrain(float dimension, Microsoft::WRL::ComPtr<ID3D11Device> device)
+void Terrain::CreateTerrain(float dimension, float frequency, Microsoft::WRL::ComPtr<ID3D11Device> device)
 {
 	CreateBufferResources(dimension, device);
 	this->dimension = dimension;
+	this->frequency = frequency;
 
 	GenerateTerrain(device);
 }
@@ -28,6 +29,7 @@ void Terrain::GenerateTerrain(Microsoft::WRL::ComPtr<ID3D11Device> device)
 
 	terrainGenCS->SetShader();
 	terrainGenCS->SetUnorderedAccessView("heightMap", heightUAV);
+	terrainGenCS->SetFloat("frequency", frequency);
 	terrainGenCS->CopyAllBufferData();
 	terrainGenCS->DispatchByThreads(dimension, dimension, 1);
 	terrainGenCS->SetUnorderedAccessView("heightMap", 0);

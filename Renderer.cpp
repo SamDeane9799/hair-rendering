@@ -407,12 +407,18 @@ void Renderer::DrawUI(vector<shared_ptr<Material>> materials, float deltaTime)
 	if (ImGui::CollapsingHeader("Terrain")) {
 		ImGui::Image((void*)terrain->GetHeightSRV().Get(), ImVec2(256, 256));
 
-		for (int i = 0; i < sizeof(terrainGenDimensions) / sizeof(int); i++)
+		for (int j = 0; j < sizeof(frequencyOptions) / sizeof(float); j++)
 		{
-			if (ImGui::RadioButton(to_string(terrainGenDimensions[i]).c_str(), terrainDimensions == i)) {
-				terrainDimensions = i;
-				terrain->CreateTerrain(terrainGenDimensions[i], device);
+			for (int i = 0; i < sizeof(terrainGenDimensions) / sizeof(int); i++)
+			{
+				if (ImGui::RadioButton(to_string(terrainGenDimensions[i]).append('x' + to_string(frequencyOptions[j]).substr(0, 3)).c_str(), terrainDimensions == i && frequency == j)) {
+					terrainDimensions = i;
+					frequency = j;
+					terrain->CreateTerrain(terrainGenDimensions[i], frequencyOptions[j], device);
+				}
+				ImGui::SameLine();
 			}
+			ImGui::NewLine();
 		}
 	}
 	ImGui::End();
